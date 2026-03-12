@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PulsePoll Platform
+
+A comprehensive web-based polling and survey platform built with Next.js 14 App Router, MongoDB, and Tailwind CSS.
+
+## Features
+
+- Multi-type poll creation (single choice, multiple choice, ranking, yes/no, survey)
+- Real-time results with live updates
+- Comprehensive duplicate vote prevention
+- Advanced analytics and data export
+- Public poll discovery directory
+- Administrative controls and moderation
+- Responsive design with embed capabilities
+
+## Tech Stack
+
+- **Frontend/Backend**: Next.js 14 App Router (full-stack)
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: NextAuth.js (Auth.js)
+- **Styling**: Tailwind CSS
+- **Real-time**: Server-Sent Events (SSE)
+- **Testing**: Jest + fast-check for property-based testing
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set up environment variables:
+Copy `.env.local` and update with your values:
+- `MONGODB_URI`: Your MongoDB connection string
+- `NEXTAUTH_SECRET`: A secure random string for NextAuth
+- `NEXTAUTH_URL`: Your application URL
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run tests:
+```bash
+npm test
+npm run test:coverage
+npm run test:property  # Property-based tests
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/              # Next.js App Router pages and API routes
+├── components/       # Reusable React components
+├── hooks/           # Custom React hooks
+├── lib/             # Utility libraries and configurations
+├── models/          # MongoDB/Mongoose models
+├── services/        # Business logic services
+├── types/           # TypeScript type definitions
+├── utils/           # Utility functions
+└── __tests__/       # Test files
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project follows a spec-driven development approach with comprehensive requirements, design documentation, and property-based testing for correctness validation.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See the `.kiro/specs/pulsepoll-platform/` directory for detailed specifications and implementation tasks.
