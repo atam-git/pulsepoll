@@ -31,12 +31,17 @@ export default function VotePage() {
   const [poll, setPoll] = useState<Poll | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<any>(null)
   const [hasVoted, setHasVoted] = useState(false)
 
   useEffect(() => {
     if (!pollId) return
 
     const fetchPoll = async () => {
+      let responseStatus = 'N/A'
+      let responseHeaders = 'N/A'
+      let responseText = 'N/A'
+      
       try {
         console.log('Fetching poll:', pollId)
         const response = await fetch(`/api/polls/${pollId}`, {
@@ -46,28 +51,58 @@ export default function VotePage() {
           },
         })
         
+        responseStatus = response.status.toString()
+        responseHeaders = JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)
+        
         console.log('Response status:', response.status)
         console.log('Response headers:', Object.fromEntries(response.headers.entries()))
         
+        // Get response text first
+        responseText = await response.text()
+        console.log('Response text:', responseText.substring(0, 500))
+        
         if (!response.ok) {
-          const text = await response.text()
-          console.error('Error response:', text)
+          console.error('Error response:', responseText)
+          setDebugInfo({
+            pollId,
+            status: responseStatus,
+            headers: responseHeaders,
+            responsePreview: responseText.substring(0, 500)
+          })
           throw new Error(`Failed to fetch poll (${response.status})`)
         }
         
         const contentType = response.headers.get('content-type')
         if (!contentType || !contentType.includes('application/json')) {
-          const text = await response.text()
-          console.error('Non-JSON response:', text.substring(0, 200))
+          console.error('Non-JSON response:', responseText.substring(0, 200))
+          setDebugInfo({
+            pollId,
+            status: responseStatus,
+            headers: responseHeaders,
+            contentType: contentType || 'missing',
+            responsePreview: responseText.substring(0, 500)
+          })
           throw new Error('Server returned invalid response')
         }
         
-        const data = await response.json()
+        const data = JSON.parse(responseText)
         console.log('Poll data:', data)
         setPoll(data.poll)
         setLoading(false)
       } catch (err) {
         console.error('Poll fetch error:', err)
+        
+        // Save debug info if not already set
+        if (!debugInfo) {
+          setDebugInfo({
+            pollId,
+            status: responseStatus,
+            headers: responseHeaders,
+            responsePreview: responseText.substring(0, 500),
+            errorMessage: err instanceof Error ? err.message : 'Unknown error'
+          })
+        }
+        
         setError(err instanceof Error ? err.message : 'Failed to load poll')
         setLoading(false)
       }
@@ -94,11 +129,9 @@ export default function VotePage() {
           <h1>Poll Not Found</h1>
           <p>{error || 'This poll does not exist or is no longer available.'}</p>
           <details style={{ marginTop: '20px', textAlign: 'left', fontSize: '12px', color: '#666' }}>
-            <summary style={{ cursor: 'pointer', marginBottom: '10px' }}>Technical Details</summary>
-            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-              Poll ID: {pollId}
-              {'\n'}Error: {error}
-              {'\n'}URL: {typeof window !== 'undefined' ? window.location.href : 'N/A'}
+            <summary style={{ cursor: 'pointer', marginBottom: '10px' }}>▼ Technical Details</summary>
+            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+              {debugInfo ? JSON.stringify(debugInfo, null, 2) : `Poll ID: ${pollId}\nError: ${error}\nURL: ${typeof window !== 'undefined' ? window.location.href : 'N/A'}`}
             </pre>
           </details>
         </div>
