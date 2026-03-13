@@ -113,6 +113,10 @@ export default function VotePage() {
 
   const handleVoteSuccess = () => setHasVoted(true)
 
+  const handleViewResults = () => {
+    window.location.href = `/results/${pollId}`
+  }
+
   if (loading) {
     return (
       <div className={styles.loadingScreen}>
@@ -150,6 +154,9 @@ export default function VotePage() {
           </div>
           <h2>Thank You!</h2>
           <p>Your vote has been recorded successfully.</p>
+          <button onClick={handleViewResults} className={styles.viewResultsBtn}>
+            View Results
+          </button>
         </div>
       </div>
     )
@@ -176,6 +183,7 @@ export default function VotePage() {
           pollType={poll.type as 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'}
           options={poll.options}
           onVoteSuccess={handleVoteSuccess}
+          onViewResults={handleViewResults}
         />
       </main>
     </div>
