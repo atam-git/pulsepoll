@@ -62,7 +62,7 @@ const PollOptionSchema = new Schema<IPollOption>({
   },
   text: {
     type: String,
-    required: [true, 'Option text is required'],
+    required: false,
     trim: true,
     maxlength: [200, 'Option text cannot exceed 200 characters']
   },
@@ -82,6 +82,13 @@ const PollOptionSchema = new Schema<IPollOption>({
     min: [0, 'Vote count cannot be negative']
   }
 }, { _id: false })
+
+// Add validation to ensure each option has either text or imageUrl
+PollOptionSchema.pre('validate', function() {
+  if (!this.text && !this.imageUrl) {
+    throw new Error('Each option must have either text or an image')
+  }
+})
 
 const PollSchema = new Schema<IPoll>({
   title: {

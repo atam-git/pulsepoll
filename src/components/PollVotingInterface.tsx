@@ -5,8 +5,9 @@ import { CheckCircleIcon } from '@heroicons/react/24/outline'
 
 interface PollOption {
   id: string
-  text: string
+  text?: string
   voteCount: number
+  imageUrl?: string
 }
 
 interface PollVotingInterfaceProps {
@@ -52,7 +53,7 @@ export function PollVotingInterface({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          optionIds: selectedOptions
+          votes: selectedOptions
         })
       })
 
@@ -86,9 +87,24 @@ export function PollVotingInterface({
               } ${submitting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium">{option.text}</span>
+                <div className="flex items-center gap-3 flex-1">
+                  {option.imageUrl && (
+                    <img
+                      src={option.imageUrl}
+                      alt={`${option.text || 'Option'} image`}
+                      className="w-16 h-12 object-cover rounded border border-gray-200 flex-shrink-0"
+                    />
+                  )}
+                  {option.text ? (
+                    <span className="font-medium">{option.text}</span>
+                  ) : option.imageUrl ? (
+                    <span className="font-medium text-gray-500 italic">Image option</span>
+                  ) : (
+                    <span className="font-medium text-gray-400">Empty option</span>
+                  )}
+                </div>
                 {isSelected && (
-                  <CheckCircleIcon className="w-6 h-6 text-blue-500" />
+                  <CheckCircleIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
                 )}
               </div>
             </button>

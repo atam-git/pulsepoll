@@ -48,8 +48,7 @@ const SessionSchema = new Schema<ISession>({
   expiresAt: {
     type: Date,
     required: [true, 'Expiration date is required'],
-    default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-    index: { expireAfterSeconds: 0 } // MongoDB TTL index
+    default: () => new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
   }
 }, {
   timestamps: { createdAt: true, updatedAt: false },

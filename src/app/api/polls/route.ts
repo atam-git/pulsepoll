@@ -48,18 +48,24 @@ async function createPoll(req: AuthenticatedRequest) {
         )
       }
     } else if (['single', 'multiple', 'ranking'].includes(type)) {
-      // Choice-based polls need at least 2 options
-      if (!Array.isArray(options) || options.length < 2) {
+      // Choice-based polls need at least 2 options with either text or imageUrl
+      const validOptions = options.filter((opt: any) => 
+        (opt.text && opt.text.trim()) || opt.imageUrl
+      )
+      if (!Array.isArray(options) || validOptions.length < 2) {
         return NextResponse.json(
-          { error: 'Choice-based polls must have at least 2 options' },
+          { error: 'Choice-based polls must have at least 2 options (each option must have text or an image)' },
           { status: 400 }
         )
       }
     } else if (type === 'survey') {
       // Survey polls can have any number of questions
-      if (!Array.isArray(options) || options.length < 1) {
+      const validOptions = options.filter((opt: any) => 
+        (opt.text && opt.text.trim()) || opt.imageUrl
+      )
+      if (!Array.isArray(options) || validOptions.length < 1) {
         return NextResponse.json(
-          { error: 'Survey polls must have at least 1 question' },
+          { error: 'Survey polls must have at least 1 question (each option must have text or an image)' },
           { status: 400 }
         )
       }
@@ -101,7 +107,8 @@ async function createPoll(req: AuthenticatedRequest) {
       type,
       options: options.map((option: any, index: number) => ({
         id: `option_${index + 1}`,
-        text: option.text?.trim() || option,
+        text: option.text?.trim() || '',
+        imageUrl: option.imageUrl || undefined,
         voteCount: 0,
         ...(type === 'survey' && option.type && { type: option.type })
       })),

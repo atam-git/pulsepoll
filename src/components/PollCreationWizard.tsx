@@ -12,6 +12,8 @@ import {
   TrashIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PhotoIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 
 type PollType = 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'
@@ -19,6 +21,8 @@ type PollType = 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'
 interface PollOption {
   id: string
   text: string
+  imageUrl?: string
+  uploading?: boolean
 }
 
 interface PollSettings {
@@ -93,8 +97,8 @@ export function PollCreationWizard() {
 
     if (s === 1) {
       if (formData.type !== 'yesno') {
-        const filled = formData.options.filter(o => o.text.trim())
-        if (filled.length < 2) newErrors.options = 'At least 2 options are required'
+        const validOptions = formData.options.filter(o => o.text.trim() || o.imageUrl)
+        if (validOptions.length < 2) newErrors.options = 'At least 2 options are required (each option must have text or an image)'
       }
     }
 
@@ -134,6 +138,56 @@ export function PollCreationWizard() {
     }))
   }
 
+  const uploadImage = async (id: string, file: File) => {
+    try {
+      // Set uploading state
+      setFormData(prev => ({
+        ...prev,
+        options: prev.options.map(o => (o.id === id ? { ...o, uploading: true } : o)),
+      }))
+
+      const formData = new FormData()
+      formData.append('image', file)
+
+      const response = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to upload image')
+      }
+
+      const data = await response.json()
+      
+      // Update option with image URL
+      setFormData(prev => ({
+        ...prev,
+        options: prev.options.map(o => 
+          o.id === id ? { ...o, imageUrl: data.imageUrl, uploading: false } : o
+        ),
+      }))
+    } catch (error) {
+      console.error('Image upload error:', error)
+      // Reset uploading state on error
+      setFormData(prev => ({
+        ...prev,
+        options: prev.options.map(o => (o.id === id ? { ...o, uploading: false } : o)),
+      }))
+      alert('Failed to upload image. Please try again.')
+    }
+  }
+
+  const removeImage = (id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      options: prev.options.map(o => 
+        o.id === id ? { ...o, imageUrl: undefined } : o
+      ),
+    }))
+  }
+
   const handleSubmit = async () => {
     if (!validateStep(step)) return
 
@@ -147,7 +201,10 @@ export function PollCreationWizard() {
         type: formData.type,
         options: formData.type === 'yesno'
           ? [{ text: 'Yes' }, { text: 'No' }]
-          : formData.options.filter(o => o.text.trim()).map(o => ({ text: o.text })),
+          : formData.options.filter(o => o.text.trim() || o.imageUrl).map(o => ({ 
+              text: o.text || '', 
+              imageUrl: o.imageUrl 
+            })),
         settings: {
           privacy: formData.settings.privacy,
           expirationDate: formData.settings.expirationDate || undefined,
@@ -275,24 +332,74 @@ export function PollCreationWizard() {
             ) : (
               <>
                 {errors.options && <p className="text-sm text-red-600">{errors.options}</p>}
+                <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg mb-4">
+                  💡 <strong>Tip:</strong> Each option needs either text, an image, or both. You can create image-only options by uploading an image without adding text.
+                </div>
                 <div className="space-y-3">
                   {formData.options.map((option, index) => (
-                    <div key={option.id} className="flex items-center gap-2">
-                      <span className="text-sm text-gray-400 w-6 text-center">{index + 1}.</span>
-                      <input
-                        type="text"
-                        value={option.text}
-                        onChange={e => updateOption(option.id, e.target.value)}
-                        placeholder={`Option ${index + 1}`}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                      <button
-                        onClick={() => removeOption(option.id)}
-                        disabled={formData.options.length <= 2}
-                        className="p-2 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
+                    <div key={option.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-sm text-gray-400 w-6 text-center">{index + 1}.</span>
+                        <input
+                          type="text"
+                          value={option.text}
+                          onChange={e => updateOption(option.id, e.target.value)}
+                          placeholder={`Option ${index + 1} (optional if image added)`}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <button
+                          onClick={() => removeOption(option.id)}
+                          disabled={formData.options.length <= 2}
+                          className="p-2 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Image Upload Section */}
+                      <div className="ml-8">
+                        {option.imageUrl ? (
+                          <div className="relative inline-block">
+                            <img
+                              src={option.imageUrl}
+                              alt={`Option ${index + 1} image`}
+                              className="w-32 h-24 object-cover rounded-lg border border-gray-200"
+                            />
+                            <button
+                              onClick={() => removeImage(option.id)}
+                              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                            >
+                              <XMarkIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) {
+                                  uploadImage(option.id, file)
+                                }
+                              }}
+                              className="hidden"
+                              id={`image-upload-${option.id}`}
+                              disabled={option.uploading}
+                            />
+                            <label
+                              htmlFor={`image-upload-${option.id}`}
+                              className={`flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 ${
+                                option.uploading ? 'opacity-50 cursor-not-allowed' : ''
+                              }`}
+                            >
+                              <PhotoIcon className="w-4 h-4" />
+                              {option.uploading ? 'Uploading...' : 'Add Image'}
+                            </label>
+                            <span className="text-xs text-gray-500">Optional</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -410,18 +517,34 @@ export function PollCreationWizard() {
 
               <div className="border border-gray-200 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-gray-500 mb-2">Options</h3>
-                <ul className="list-disc list-inside text-gray-900 space-y-1">
+                <div className="space-y-3">
                   {formData.type === 'yesno' ? (
                     <>
-                      <li>Yes</li>
-                      <li>No</li>
+                      <div className="flex items-center gap-3">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        <span className="text-gray-900">Yes</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        <span className="text-gray-900">No</span>
+                      </div>
                     </>
                   ) : (
-                    formData.options.filter(o => o.text.trim()).map(o => (
-                      <li key={o.id}>{o.text}</li>
+                    formData.options.filter(o => o.text.trim() || o.imageUrl).map(o => (
+                      <div key={o.id} className="flex items-center gap-3">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        <span className="text-gray-900">{o.text || 'Image only'}</span>
+                        {o.imageUrl && (
+                          <img
+                            src={o.imageUrl}
+                            alt={`${o.text || 'Option'} image`}
+                            className="w-16 h-12 object-cover rounded border border-gray-200"
+                          />
+                        )}
+                      </div>
                     ))
                   )}
-                </ul>
+                </div>
               </div>
 
               <div className="border border-gray-200 rounded-lg p-4">

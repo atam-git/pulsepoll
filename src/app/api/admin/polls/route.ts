@@ -144,7 +144,7 @@ async function updatePoll(req: AuthenticatedRequest) {
               'moderation.flags': {
                 reason: flagReason,
                 description: flagDescription,
-                flaggedBy: req.user.userId,
+                flaggedBy: req.user?.id,
                 flaggedAt: new Date()
               }
             }
@@ -163,7 +163,7 @@ async function updatePoll(req: AuthenticatedRequest) {
           {
             'moderation.isFlagged': false,
             'moderation.flags': [],
-            'moderation.reviewedBy': req.user.userId,
+            'moderation.reviewedBy': req.user?.id,
             'moderation.reviewedAt': new Date(),
             'moderation.reviewNotes': reviewNotes || 'Bulk unflagged by admin'
           }
@@ -206,7 +206,7 @@ async function updatePoll(req: AuthenticatedRequest) {
             'moderation.flags': {
               reason: flagReason,
               description: flagDescription,
-              flaggedBy: req.user.userId,
+              flaggedBy: req.user?.id,
               flaggedAt: new Date()
             }
           }
@@ -239,7 +239,7 @@ async function updatePoll(req: AuthenticatedRequest) {
         {
           'moderation.isFlagged': false,
           'moderation.flags': [],
-          'moderation.reviewedBy': req.user.userId,
+          'moderation.reviewedBy': req.user?.id,
           'moderation.reviewedAt': new Date(),
           'moderation.reviewNotes': reviewNotes || 'Approved by admin'
         },
@@ -271,7 +271,7 @@ async function updatePoll(req: AuthenticatedRequest) {
         {
           status: 'closed',
           'moderation.isFlagged': true,
-          'moderation.reviewedBy': req.user.userId,
+          'moderation.reviewedBy': req.user?.id,
           'moderation.reviewedAt': new Date(),
           'moderation.reviewNotes': reviewNotes || 'Rejected by admin'
         },
