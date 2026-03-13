@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
+import { withRegistrationRateLimit } from '@/middleware/rateLimit'
+import { AuthenticatedRequest } from '@/middleware/auth'
 
-export async function POST(request: NextRequest) {
+async function registerUser(request: AuthenticatedRequest) {
   try {
     const { email, password, name } = await request.json()
 
@@ -114,3 +116,6 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+// Apply rate limiting middleware
+export const POST = withRegistrationRateLimit(registerUser)

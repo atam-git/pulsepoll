@@ -123,13 +123,32 @@ export class AuthenticationService {
         return { success: false, error: 'Invalid email or password' }
       }
 
+      // Check if user can login (not suspended or banned)
+      if (!user.canLogin()) {
+        if (user.isBanned()) {
+          return { 
+            success: false, 
+            error: `Account has been banned. Reason: ${user.banReason || 'No reason provided'}` 
+          }
+        }
+        if (user.isSuspended()) {
+          const suspendedUntil = user.suspendedUntil 
+            ? new Date(user.suspendedUntil).toLocaleDateString() 
+            : 'unknown date'
+          return { 
+            success: false, 
+            error: `Account is suspended until ${suspendedUntil}. Reason: ${user.suspensionReason || 'No reason provided'}` 
+          }
+        }
+      }
+
       // Verify password
       const isPasswordValid = await this.verifyPassword(password, user.passwordHash)
       if (!isPasswordValid) {
         return { success: false, error: 'Invalid email or password' }
       }
 
-      // Update last login
+      // Update last login and record activity
       await user.updateLastLogin()
 
       return {

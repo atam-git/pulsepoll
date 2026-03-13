@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withUserAuth, withOptionalAuth, AuthenticatedRequest } from '@/middleware/auth'
+import { withPollCreationRateLimit, withRateLimit, combineWithRateLimit } from '@/middleware/rateLimit'
 import Poll from '@/models/Poll'
+import User from '@/models/User' // Import User model to ensure it's registered
 import connectDB from '@/lib/mongodb'
 
 /**
@@ -16,7 +18,7 @@ async function createPoll(req: AuthenticatedRequest) {
       type,
       options,
       settings = {},
-      privacy = {}
+      privacy
     } = body
 
     // Validate required fields
@@ -103,30 +105,30 @@ async function createPoll(req: AuthenticatedRequest) {
         voteCount: 0,
         ...(type === 'survey' && option.type && { type: option.type })
       })),
-      createdBy: req.user!.id,
+      creatorId: req.user!.id, // Use creatorId instead of createdBy
+      status: 'active',
+      privacy: typeof privacy === 'string' ? privacy : (privacy?.isPublic === false ? 'private' : 'public'), // Handle both string and object formats
       settings: {
-        allowMultipleVotes: settings.allowMultipleVotes || false,
-        requireAuth: settings.requireAuth || false,
-        showResults: settings.showResults !== false, // Default to true
-        allowComments: settings.allowComments || false,
-        expiresAt: settings.expiresAt ? new Date(settings.expiresAt) : null,
-        maxVotesPerUser: settings.maxVotesPerUser || 1
-      },
-      privacy: {
-        isPublic: privacy.isPublic !== false, // Default to true
-        allowAnonymous: privacy.allowAnonymous !== false, // Default to true
-        requireEmailVerification: privacy.requireEmailVerification || false,
-        restrictedDomains: privacy.restrictedDomains || []
+        allowAnonymous: typeof privacy === 'object' ? (privacy.allowAnonymous !== false) : settings.allowAnonymous !== false, // Default to true
+        requireCaptcha: settings.requireCaptcha || false,
+        expiresAt: settings.expiresAt ? new Date(settings.expiresAt) : undefined,
+        maxVotes: settings.maxVotesPerUser || undefined
       },
       metadata: {
         totalVotes: 0,
         uniqueVoters: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        status: 'active',
-        featured: false,
-        tags: Array.isArray(body.tags) ? body.tags : []
-      }
+        viewCount: 0
+      },
+      moderation: {
+        isFlagged: false,
+        flags: []
+      },
+      analytics: {
+        referralSources: new Map(),
+        deviceTypes: new Map(),
+        locations: new Map()
+      },
+      tags: Array.isArray(body.tags) ? body.tags : []
     }
 
     // Create the poll
@@ -144,7 +146,8 @@ async function createPoll(req: AuthenticatedRequest) {
         settings: poll.settings,
         privacy: poll.privacy,
         metadata: poll.metadata,
-        createdBy: poll.createdBy,
+        creatorId: poll.creatorId,
+        status: poll.status,
         createdAt: poll.createdAt
       }
     }, { status: 201 })
@@ -192,7 +195,7 @@ async function getPolls(req: AuthenticatedRequest) {
 
     // Filter by status
     if (status) {
-      query['metadata.status'] = status
+      query.status = status
     }
 
     // Filter by type
@@ -202,12 +205,12 @@ async function getPolls(req: AuthenticatedRequest) {
 
     // Filter by creator
     if (createdBy) {
-      query.createdBy = createdBy
+      query.creatorId = createdBy
     }
 
     // Filter by public/private
     if (isPublic) {
-      query['privacy.isPublic'] = true
+      query.privacy = 'public'
     }
 
     // Filter by featured
@@ -228,12 +231,12 @@ async function getPolls(req: AuthenticatedRequest) {
       // Non-admin users can only see public polls or their own polls
       if (!createdBy) {
         query.$or = [
-          { 'privacy.isPublic': true },
-          ...(req.user ? [{ createdBy: req.user.id }] : [])
+          { privacy: 'public' },
+          ...(req.user ? [{ creatorId: req.user.id }] : [])
         ]
       } else if (req.user && createdBy !== req.user.id) {
         // Can't see other users' private polls
-        query['privacy.isPublic'] = true
+        query.privacy = 'public'
       }
     }
 
@@ -252,7 +255,7 @@ async function getPolls(req: AuthenticatedRequest) {
 
     // Get polls with pagination
     const polls = await Poll.find(query)
-      .populate('createdBy', 'email')
+      .populate('creatorId', 'email')
       .sort(sort)
       .skip((page - 1) * limit)
       .limit(limit)
@@ -269,7 +272,8 @@ async function getPolls(req: AuthenticatedRequest) {
         settings: poll.settings,
         privacy: poll.privacy,
         metadata: poll.metadata,
-        createdBy: poll.createdBy,
+        creatorId: poll.creatorId,
+        status: poll.status,
         createdAt: poll.createdAt,
         updatedAt: poll.updatedAt
       })),
@@ -290,6 +294,13 @@ async function getPolls(req: AuthenticatedRequest) {
   }
 }
 
-// Apply authentication middleware
-export const POST = withUserAuth(createPoll)
-export const GET = withOptionalAuth(getPolls)
+// Apply authentication middleware with rate limiting
+export const POST = combineWithRateLimit(withPollCreationRateLimit, withUserAuth)(createPoll)
+export const GET = combineWithRateLimit(
+  (handler: any) => withRateLimit(handler, {
+    maxRequests: 100,
+    windowMs: 60 * 1000,
+    message: 'Too many poll requests. Please wait before requesting more polls.'
+  }),
+  withOptionalAuth
+)(getPolls)

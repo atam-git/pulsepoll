@@ -13,8 +13,27 @@ export interface IUser extends Document {
     name?: string
     avatar?: string
   }
+  status: 'active' | 'suspended' | 'banned'
+  suspendedUntil?: Date
+  suspensionReason?: string
+  bannedAt?: Date
+  banReason?: string
+  activityLog: {
+    lastActive?: Date
+    pollsCreated: number
+    votesSubmitted: number
+    loginCount: number
+  }
   isAdmin(): boolean
   updateLastLogin(): Promise<IUser>
+  isSuspended(): boolean
+  isBanned(): boolean
+  canLogin(): boolean
+  suspend(until: Date, reason: string): Promise<IUser>
+  ban(reason: string): Promise<IUser>
+  unsuspend(): Promise<IUser>
+  unban(): Promise<IUser>
+  recordActivity(activityType: 'login' | 'poll_created' | 'vote_submitted'): Promise<IUser>
 }
 
 export interface IUserModel extends Model<IUser> {
@@ -62,6 +81,50 @@ const UserSchema = new Schema<IUser>({
       trim: true,
       maxlength: [500, 'Avatar URL cannot exceed 500 characters']
     }
+  },
+  status: {
+    type: String,
+    enum: ['active', 'suspended', 'banned'],
+    default: 'active'
+  },
+  suspendedUntil: {
+    type: Date,
+    default: null
+  },
+  suspensionReason: {
+    type: String,
+    trim: true,
+    maxlength: [500, 'Suspension reason cannot exceed 500 characters']
+  },
+  bannedAt: {
+    type: Date,
+    default: null
+  },
+  banReason: {
+    type: String,
+    trim: true,
+    maxlength: [500, 'Ban reason cannot exceed 500 characters']
+  },
+  activityLog: {
+    lastActive: {
+      type: Date,
+      default: null
+    },
+    pollsCreated: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    votesSubmitted: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    loginCount: {
+      type: Number,
+      default: 0,
+      min: 0
+    }
   }
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
@@ -69,10 +132,11 @@ const UserSchema = new Schema<IUser>({
 })
 
 // Indexes for performance
-UserSchema.index({ email: 1 }, { unique: true })
 UserSchema.index({ createdAt: -1 })
 UserSchema.index({ role: 1 })
 UserSchema.index({ emailVerified: 1 })
+UserSchema.index({ status: 1 })
+UserSchema.index({ 'activityLog.lastActive': -1 })
 
 // Virtual for user ID as string
 UserSchema.virtual('id').get(function() {
@@ -112,6 +176,87 @@ UserSchema.methods.isAdmin = function() {
 // Instance method to update last login
 UserSchema.methods.updateLastLogin = function() {
   this.lastLoginAt = new Date()
+  this.activityLog.lastActive = new Date()
+  this.activityLog.loginCount += 1
+  return this.save()
+}
+
+// Instance method to check if user is suspended
+UserSchema.methods.isSuspended = function() {
+  if (this.status !== 'suspended') return false
+  if (!this.suspendedUntil) return false
+  
+  // Check if suspension has expired
+  if (new Date() > this.suspendedUntil) {
+    // Auto-unsuspend if time has passed
+    this.status = 'active'
+    this.suspendedUntil = undefined
+    this.suspensionReason = undefined
+    this.save()
+    return false
+  }
+  
+  return true
+}
+
+// Instance method to check if user is banned
+UserSchema.methods.isBanned = function() {
+  return this.status === 'banned'
+}
+
+// Instance method to check if user can login
+UserSchema.methods.canLogin = function() {
+  return !this.isSuspended() && !this.isBanned()
+}
+
+// Instance method to suspend user
+UserSchema.methods.suspend = function(until: Date, reason: string) {
+  this.status = 'suspended'
+  this.suspendedUntil = until
+  this.suspensionReason = reason
+  return this.save()
+}
+
+// Instance method to ban user
+UserSchema.methods.ban = function(reason: string) {
+  this.status = 'banned'
+  this.bannedAt = new Date()
+  this.banReason = reason
+  return this.save()
+}
+
+// Instance method to unsuspend user
+UserSchema.methods.unsuspend = function() {
+  this.status = 'active'
+  this.suspendedUntil = undefined
+  this.suspensionReason = undefined
+  return this.save()
+}
+
+// Instance method to unban user
+UserSchema.methods.unban = function() {
+  this.status = 'active'
+  this.bannedAt = undefined
+  this.banReason = undefined
+  return this.save()
+}
+
+// Instance method to record activity
+UserSchema.methods.recordActivity = function(activityType: 'login' | 'poll_created' | 'vote_submitted') {
+  this.activityLog.lastActive = new Date()
+  
+  switch (activityType) {
+    case 'login':
+      this.activityLog.loginCount += 1
+      break
+    case 'poll_created':
+      this.activityLog.pollsCreated += 1
+      break
+    case 'vote_submitted':
+      this.activityLog.votesSubmitted += 1
+      break
+  }
+  
   return this.save()
 }
 

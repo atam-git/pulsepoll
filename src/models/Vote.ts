@@ -31,6 +31,13 @@ export interface IVote extends Document {
       userAgent?: string
       ipAddress?: string
     }
+    demographics?: {
+      deviceType: 'mobile' | 'tablet' | 'desktop'
+      location?: string
+      referralSource: string
+      timestamp: Date
+      sessionDuration?: number
+    }
   }
   createdAt: Date
   referralSource?: string

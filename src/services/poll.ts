@@ -169,7 +169,7 @@ export class PollService {
       }
 
       // Check ownership or admin role
-      if (poll.createdBy.toString() !== userId && userRole !== 'admin') {
+      if (poll.creatorId.toString() !== userId && userRole !== 'admin') {
         return { canEdit: false, reason: 'Access denied' }
       }
 
@@ -211,7 +211,7 @@ export class PollService {
       }
 
       // Check ownership or admin role
-      if (poll.createdBy.toString() !== userId && userRole !== 'admin') {
+      if (poll.creatorId.toString() !== userId && userRole !== 'admin') {
         return { canDelete: false, reason: 'Access denied' }
       }
 
@@ -349,7 +349,7 @@ export class PollService {
         {
           $lookup: {
             from: 'users',
-            localField: 'createdBy',
+            localField: 'creatorId',
             foreignField: '_id',
             as: 'creator',
             pipeline: [{ $project: { email: 1 } }]

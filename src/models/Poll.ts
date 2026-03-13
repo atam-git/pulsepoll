@@ -8,15 +8,31 @@ export interface IPollOption {
   voteCount: number
 }
 
+export interface IPollFlag {
+  reason: 'inappropriate' | 'spam' | 'offensive' | 'misleading' | 'other'
+  description?: string
+  flaggedBy: mongoose.Types.ObjectId
+  flaggedAt: Date
+}
+
 export interface IPoll extends Document {
   _id: mongoose.Types.ObjectId
   title: string
   description?: string
   type: 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'
+  category?: string
+  tags?: string[]
   options: IPollOption[]
   privacy: 'public' | 'unlisted' | 'private'
   creatorId: mongoose.Types.ObjectId
   status: 'draft' | 'active' | 'expired' | 'closed'
+  moderation: {
+    isFlagged: boolean
+    flags: IPollFlag[]
+    reviewedBy?: mongoose.Types.ObjectId
+    reviewedAt?: Date
+    reviewNotes?: string
+  }
   settings: {
     allowAnonymous: boolean
     requireCaptcha: boolean
@@ -88,6 +104,29 @@ const PollSchema = new Schema<IPoll>({
     },
     required: [true, 'Poll type is required']
   },
+  category: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'Category cannot exceed 50 characters'],
+    enum: {
+      values: [
+        'general', 'politics', 'technology', 'entertainment', 'sports', 
+        'business', 'education', 'health', 'lifestyle', 'science',
+        'food', 'travel', 'gaming', 'music', 'movies', 'books',
+        'fashion', 'art', 'environment', 'social', 'other'
+      ],
+      message: 'Category must be a valid category'
+    }
+  },
+  tags: {
+    type: [String],
+    validate: {
+      validator: function(tags: string[]) {
+        return tags.length <= 10 && tags.every(tag => tag.length <= 30)
+      },
+      message: 'Maximum 10 tags allowed, each tag must be 30 characters or less'
+    }
+  },
   options: {
     type: [PollOptionSchema],
     required: [true, 'Poll options are required'],
@@ -119,6 +158,41 @@ const PollSchema = new Schema<IPoll>({
       message: 'Status must be one of: draft, active, expired, closed'
     },
     default: 'draft'
+  },
+  moderation: {
+    isFlagged: {
+      type: Boolean,
+      default: false
+    },
+    flags: [{
+      reason: {
+        type: String,
+        enum: ['inappropriate', 'spam', 'offensive', 'misleading', 'other'],
+        required: true
+      },
+      description: {
+        type: String,
+        maxlength: [500, 'Flag description cannot exceed 500 characters']
+      },
+      flaggedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      flaggedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    reviewedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    reviewedAt: Date,
+    reviewNotes: {
+      type: String,
+      maxlength: [1000, 'Review notes cannot exceed 1000 characters']
+    }
   },
   settings: {
     allowAnonymous: {
@@ -190,6 +264,11 @@ PollSchema.index({ 'metadata.totalVotes': -1 })
 PollSchema.index({ 'settings.expiresAt': 1 })
 PollSchema.index({ status: 1, 'settings.expiresAt': 1 })
 PollSchema.index({ title: 'text', description: 'text' }) // Text search index
+PollSchema.index({ category: 1, createdAt: -1 }) // Category filtering
+PollSchema.index({ tags: 1 }) // Tag filtering
+PollSchema.index({ privacy: 1, status: 1, category: 1, createdAt: -1 }) // Combined filtering
+PollSchema.index({ 'moderation.isFlagged': 1, createdAt: -1 }) // Moderation queue
+PollSchema.index({ 'moderation.reviewedAt': 1 }) // Reviewed polls
 
 // Virtual for poll ID as string
 PollSchema.virtual('id').get(function() {

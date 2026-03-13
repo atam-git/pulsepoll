@@ -38,7 +38,7 @@ async function duplicatePoll(req: AuthenticatedRequest, { params }: RouteParams)
     // Check if user can access the original poll
     const canAccess = 
       originalPoll.privacy.isPublic || 
-      req.user!.id === originalPoll.createdBy.toString() || 
+      req.user!.id === originalPoll.creatorId.toString() || 
       req.user!.role === 'admin'
 
     if (!canAccess) {
@@ -59,7 +59,7 @@ async function duplicatePoll(req: AuthenticatedRequest, { params }: RouteParams)
         voteCount: resetVotes ? 0 : option.voteCount,
         ...(originalPoll.type === 'survey' && option.type && { type: option.type })
       })),
-      createdBy: req.user!.id, // New owner is the current user
+      creatorId: req.user!.id, // New owner is the current user
       settings: {
         ...originalPoll.settings,
         // Reset expiration date to null for duplicated polls
@@ -97,7 +97,7 @@ async function duplicatePoll(req: AuthenticatedRequest, { params }: RouteParams)
 
     // Populate the created poll for response
     const populatedPoll = await Poll.findById(duplicatePoll._id)
-      .populate('createdBy', 'email')
+      .populate('creatorId', 'email')
       .lean()
 
     return NextResponse.json({
@@ -111,7 +111,7 @@ async function duplicatePoll(req: AuthenticatedRequest, { params }: RouteParams)
         settings: populatedPoll.settings,
         privacy: populatedPoll.privacy,
         metadata: populatedPoll.metadata,
-        createdBy: populatedPoll.createdBy,
+        creatorId: populatedPoll.creatorId,
         createdAt: populatedPoll.createdAt,
         updatedAt: populatedPoll.updatedAt
       },

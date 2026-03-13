@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { withOptionalAuth, withUserAuth, AuthenticatedRequest } from '@/middleware/auth'
 import Poll from '@/models/Poll'
 import Vote from '@/models/Vote'
+import User from '@/models/User' // Import User model to ensure it's registered
 import connectDB from '@/lib/mongodb'
 import { RealTimeHelper } from '@/services/realtime'
 
@@ -27,7 +28,7 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
     await connectDB()
 
     const poll = await Poll.findById(id)
-      .populate('createdBy', 'email')
+      .populate('creatorId', 'email')
       .lean()
 
     if (!poll) {
@@ -39,9 +40,9 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
 
     // Check if user can access this poll
     const canAccess = 
-      poll.privacy.isPublic || 
+      poll.privacy === 'public' || 
       (req.user && (
-        req.user.id === poll.createdBy._id?.toString() || 
+        req.user.id === poll.creatorId._id?.toString() || 
         req.user.role === 'admin'
       ))
 
@@ -69,7 +70,7 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
           ...poll.metadata,
           isExpired
         },
-        createdBy: poll.createdBy,
+        creatorId: poll.creatorId,
         createdAt: poll.createdAt,
         updatedAt: poll.updatedAt
       }
@@ -113,7 +114,7 @@ async function updatePoll(req: AuthenticatedRequest, { params }: RouteParams) {
 
     // Check if user can edit this poll
     const canEdit = 
-      req.user!.id === poll.createdBy.toString() || 
+      req.user!.id === poll.creatorId.toString() || 
       req.user!.role === 'admin'
 
     if (!canEdit) {
@@ -126,7 +127,7 @@ async function updatePoll(req: AuthenticatedRequest, { params }: RouteParams) {
     // Check if poll has votes and restrict editing
     if (poll.metadata.totalVotes > 0) {
       // Only allow certain fields to be updated if poll has votes
-      const allowedFields = ['description', 'settings.showResults', 'settings.allowComments', 'privacy.isPublic']
+      const allowedFields = ['description', 'settings.showResults', 'settings.allowComments', 'privacy']
       const updateFields = Object.keys(body)
       const restrictedFields = updateFields.filter(field => !allowedFields.includes(field))
       
@@ -181,7 +182,7 @@ async function updatePoll(req: AuthenticatedRequest, { params }: RouteParams) {
     }
 
     if (body.privacy) {
-      updates.privacy = { ...poll.privacy, ...body.privacy }
+      updates.privacy = body.privacy === 'private' ? 'private' : 'public'
     }
 
     if (body.options && poll.metadata.totalVotes === 0) {
@@ -201,7 +202,7 @@ async function updatePoll(req: AuthenticatedRequest, { params }: RouteParams) {
       id,
       updates,
       { new: true, runValidators: true }
-    ).populate('createdBy', 'email')
+    ).populate('creatorId', 'email')
 
     // Prepare response data
     const responseData = {
@@ -215,7 +216,7 @@ async function updatePoll(req: AuthenticatedRequest, { params }: RouteParams) {
         settings: updatedPoll.settings,
         privacy: updatedPoll.privacy,
         metadata: updatedPoll.metadata,
-        createdBy: updatedPoll.createdBy,
+        creatorId: updatedPoll.creatorId,
         createdAt: updatedPoll.createdAt,
         updatedAt: updatedPoll.updatedAt
       }
@@ -282,7 +283,7 @@ async function deletePoll(req: AuthenticatedRequest, { params }: RouteParams) {
 
     // Check if user can delete this poll
     const canDelete = 
-      req.user!.id === poll.createdBy.toString() || 
+      req.user!.id === poll.creatorId.toString() || 
       req.user!.role === 'admin'
 
     if (!canDelete) {

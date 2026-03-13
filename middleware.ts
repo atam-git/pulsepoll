@@ -29,8 +29,8 @@ export async function middleware(request: NextRequest) {
   const protectedRoutes = [
     '/dashboard',
     '/profile',
-    '/polls/create',
-    '/polls/edit',
+    '/poll/create',
+    '/poll/edit',
     '/admin'
   ]
 

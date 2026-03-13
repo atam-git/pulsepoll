@@ -47,7 +47,7 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
 
     // Check if user can modify this poll
     const canModify = 
-      req.user!.id === poll.createdBy.toString() || 
+      req.user!.id === poll.creatorId.toString() || 
       req.user!.role === 'admin'
 
     if (!canModify) {
@@ -111,7 +111,7 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
       id,
       updates,
       { new: true, runValidators: true }
-    ).populate('createdBy', 'email')
+    ).populate('creatorId', 'email')
 
     // Prepare response data
     const responseData = {
@@ -171,7 +171,7 @@ async function getPollStatus(req: AuthenticatedRequest, { params }: RouteParams)
 
     await connectDB()
 
-    const poll = await Poll.findById(id).select('metadata settings privacy createdBy')
+    const poll = await Poll.findById(id).select('metadata settings privacy creatorId')
 
     if (!poll) {
       return NextResponse.json(
@@ -184,7 +184,7 @@ async function getPollStatus(req: AuthenticatedRequest, { params }: RouteParams)
     const canAccess = 
       poll.privacy.isPublic || 
       (req.user && (
-        req.user.id === poll.createdBy.toString() || 
+        req.user.id === poll.creatorId.toString() || 
         req.user.role === 'admin'
       ))
 

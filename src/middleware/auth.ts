@@ -138,81 +138,8 @@ export function withOptionalAuth(
   })
 }
 
-/**
- * Rate limiting middleware
- * Simple in-memory rate limiter for development
- */
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
-
-export function withRateLimit(
-  handler: (req: AuthenticatedRequest, context?: any) => Promise<NextResponse>,
-  options: {
-    maxRequests?: number
-    windowMs?: number
-    keyGenerator?: (req: NextRequest) => string
-  } = {}
-) {
-  const {
-    maxRequests = 100,
-    windowMs = 15 * 60 * 1000, // 15 minutes
-    keyGenerator = (req) => {
-      // Use IP address as default key
-      const forwarded = req.headers.get('x-forwarded-for')
-      const ip = forwarded ? forwarded.split(',')[0] : 'unknown'
-      return ip
-    }
-  } = options
-
-  return async (req: NextRequest, context?: any) => {
-    const key = keyGenerator(req)
-    const now = Date.now()
-    
-    // Clean up expired entries
-    for (const [k, v] of rateLimitStore.entries()) {
-      if (v.resetTime <= now) {
-        rateLimitStore.delete(k)
-      }
-    }
-
-    // Get or create rate limit entry
-    let entry = rateLimitStore.get(key)
-    if (!entry || entry.resetTime <= now) {
-      entry = { count: 0, resetTime: now + windowMs }
-      rateLimitStore.set(key, entry)
-    }
-
-    // Check rate limit
-    if (entry.count >= maxRequests) {
-      return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded',
-          retryAfter: Math.ceil((entry.resetTime - now) / 1000)
-        },
-        { 
-          status: 429,
-          headers: {
-            'Retry-After': Math.ceil((entry.resetTime - now) / 1000).toString(),
-            'X-RateLimit-Limit': maxRequests.toString(),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': entry.resetTime.toString()
-          }
-        }
-      )
-    }
-
-    // Increment counter
-    entry.count++
-
-    // Add rate limit headers to response
-    const response = await handler(req as AuthenticatedRequest, context)
-    
-    response.headers.set('X-RateLimit-Limit', maxRequests.toString())
-    response.headers.set('X-RateLimit-Remaining', (maxRequests - entry.count).toString())
-    response.headers.set('X-RateLimit-Reset', entry.resetTime.toString())
-
-    return response
-  }
-}
+// Rate limiting functionality moved to dedicated middleware
+// Import from @/middleware/rateLimit for rate limiting functionality
 
 /**
  * Combine multiple middleware functions

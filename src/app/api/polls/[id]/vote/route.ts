@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withOptionalAuth, AuthenticatedRequest } from '@/middleware/auth'
+import { withVotingRateLimit, combineWithRateLimit } from '@/middleware/rateLimit'
 import Poll from '@/models/Poll'
 import Vote from '@/models/Vote'
 import Session from '@/models/Session'
 import connectDB from '@/lib/mongodb'
 import { RealTimeHelper } from '@/services/realtime'
+import { ReferralTracker } from '@/services/referral'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -79,6 +81,12 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
       )
     }
 
+    // Parse referral information
+    const referer = req.headers.get('referer')
+    const userAgent = req.headers.get('user-agent')
+    const url = new URL(req.url)
+    const referralData = ReferralTracker.parseReferralData(referer, userAgent, url.searchParams)
+
     // Prepare voter information
     const voterData = {
       userId: req.user?.id || null,
@@ -124,12 +132,24 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
       pollId,
       voterInfo: voterData,
       voteData: formatVoteData(poll.type, votes),
+      referralSource: referralData.source,
       metadata: {
         submittedAt: new Date(),
         pollType: poll.type,
         deviceInfo: {
           userAgent: voterData.userAgent,
           ipAddress: voterData.ipAddress
+        },
+        // Enhanced demographic tracking
+        demographics: {
+          deviceType: extractDeviceType(voterData.userAgent || ''),
+          location: voterData.location,
+          referralSource: referralData.source,
+          referralMedium: referralData.medium,
+          referralUrl: referralData.url,
+          referralCampaign: referralData.campaign,
+          timestamp: new Date(),
+          sessionDuration: null // Could be calculated if we track session start
         }
       }
     }
@@ -395,5 +415,20 @@ async function updatePollVoteCounts(poll: any, votes: any): Promise<void> {
   await Poll.findByIdAndUpdate(poll._id, updates)
 }
 
-// Apply authentication middleware (optional auth allows anonymous voting)
-export const POST = withOptionalAuth(submitVote)
+/**
+ * Extract device type from user agent
+ */
+function extractDeviceType(userAgent: string): string {
+  const ua = userAgent.toLowerCase()
+  
+  if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone')) {
+    return 'mobile'
+  } else if (ua.includes('tablet') || ua.includes('ipad')) {
+    return 'tablet'
+  } else {
+    return 'desktop'
+  }
+}
+
+// Apply authentication middleware with rate limiting (optional auth allows anonymous voting)
+export const POST = combineWithRateLimit(withVotingRateLimit, withOptionalAuth)(submitVote)

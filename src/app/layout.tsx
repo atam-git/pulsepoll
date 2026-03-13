@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SessionProvider from "@/components/providers/SessionProvider";
+import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "PulsePoll - Create and Share Polls",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <SessionProvider>
+          <Navigation />
           {children}
         </SessionProvider>
       </body>

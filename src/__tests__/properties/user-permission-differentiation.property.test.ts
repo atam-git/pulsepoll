@@ -1,0 +1,1 @@
+// Feature: pulsepoll-platform, Property 6: User Permission Diffe

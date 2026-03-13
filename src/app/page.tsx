@@ -1,3 +1,7 @@
+'use client'
+
+import Link from 'next/link'
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -11,12 +15,16 @@ export default function Home() {
             Share with your audience and get instant feedback.
           </p>
           <div className="space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors">
-              Create Poll
-            </button>
-            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-lg transition-colors">
-              Browse Polls
-            </button>
+            <Link href="/poll/create">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors">
+                Create Poll
+              </button>
+            </Link>
+            <Link href="/directory">
+              <button className="border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-lg transition-colors">
+                Browse Polls
+              </button>
+            </Link>
           </div>
         </div>
         

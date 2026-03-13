@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withAdminAuth, AuthenticatedRequest } from '@/middleware/auth'
+import { withAdminRateLimit, combineWithRateLimit } from '@/middleware/rateLimit'
 import User from '@/models/User'
 import connectDB from '@/lib/mongodb'
 
@@ -14,6 +15,7 @@ async function getUsers(req: AuthenticatedRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const search = searchParams.get('search') || ''
     const role = searchParams.get('role') || ''
+    const status = searchParams.get('status') || ''
 
     await connectDB()
 
@@ -26,6 +28,10 @@ async function getUsers(req: AuthenticatedRequest) {
     
     if (role && ['user', 'admin'].includes(role)) {
       query.role = role
+    }
+
+    if (status && ['active', 'suspended', 'banned'].includes(status)) {
+      query.status = status
     }
 
     // Get total count
@@ -45,8 +51,15 @@ async function getUsers(req: AuthenticatedRequest) {
         email: user.email,
         role: user.role,
         emailVerified: user.emailVerified,
+        status: user.status,
+        suspendedUntil: user.suspendedUntil,
+        suspensionReason: user.suspensionReason,
+        bannedAt: user.bannedAt,
+        banReason: user.banReason,
+        activityLog: user.activityLog,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
+        lastLoginAt: user.lastLoginAt
       })),
       pagination: {
         page,
@@ -66,12 +79,12 @@ async function getUsers(req: AuthenticatedRequest) {
 
 /**
  * PUT /api/admin/users
- * Update user role or status (admin only)
+ * Update user role, status, or suspend/ban user (admin only)
  */
 async function updateUser(req: AuthenticatedRequest) {
   try {
     const body = await req.json()
-    const { userId, role, emailVerified } = body
+    const { userId, role, emailVerified, action, suspendedUntil, reason } = body
 
     if (!userId) {
       return NextResponse.json(
@@ -82,23 +95,7 @@ async function updateUser(req: AuthenticatedRequest) {
 
     await connectDB()
 
-    const updateData: any = {}
-    
-    if (role && ['user', 'admin'].includes(role)) {
-      updateData.role = role
-    }
-    
-    if (typeof emailVerified === 'boolean') {
-      updateData.emailVerified = emailVerified
-    }
-
-    updateData.updatedAt = new Date()
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-passwordHash')
+    const user = await User.findById(userId)
 
     if (!user) {
       return NextResponse.json(
@@ -107,15 +104,73 @@ async function updateUser(req: AuthenticatedRequest) {
       )
     }
 
+    // Handle suspension/banning actions
+    if (action) {
+      switch (action) {
+        case 'suspend':
+          if (!suspendedUntil) {
+            return NextResponse.json(
+              { error: 'Suspension end date is required' },
+              { status: 400 }
+            )
+          }
+          await user.suspend(new Date(suspendedUntil), reason || 'No reason provided')
+          break
+        
+        case 'ban':
+          await user.ban(reason || 'No reason provided')
+          break
+        
+        case 'unsuspend':
+          await user.unsuspend()
+          break
+        
+        case 'unban':
+          await user.unban()
+          break
+        
+        default:
+          return NextResponse.json(
+            { error: 'Invalid action' },
+            { status: 400 }
+          )
+      }
+    } else {
+      // Handle regular updates
+      const updateData: any = {}
+      
+      if (role && ['user', 'admin'].includes(role)) {
+        updateData.role = role
+      }
+      
+      if (typeof emailVerified === 'boolean') {
+        updateData.emailVerified = emailVerified
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        updateData.updatedAt = new Date()
+        Object.assign(user, updateData)
+        await user.save()
+      }
+    }
+
+    const updatedUser = await User.findById(userId).select('-passwordHash')
+
     return NextResponse.json({
       success: true,
       user: {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        emailVerified: user.emailVerified,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        id: updatedUser!._id,
+        email: updatedUser!.email,
+        role: updatedUser!.role,
+        emailVerified: updatedUser!.emailVerified,
+        status: updatedUser!.status,
+        suspendedUntil: updatedUser!.suspendedUntil,
+        suspensionReason: updatedUser!.suspensionReason,
+        bannedAt: updatedUser!.bannedAt,
+        banReason: updatedUser!.banReason,
+        activityLog: updatedUser!.activityLog,
+        createdAt: updatedUser!.createdAt,
+        updatedAt: updatedUser!.updatedAt
       }
     })
   } catch (error) {
@@ -175,7 +230,7 @@ async function deleteUser(req: AuthenticatedRequest) {
   }
 }
 
-// Apply admin authentication middleware
-export const GET = withAdminAuth(getUsers)
-export const PUT = withAdminAuth(updateUser)
-export const DELETE = withAdminAuth(deleteUser)
+// Apply admin authentication middleware with rate limiting
+export const GET = combineWithRateLimit(withAdminRateLimit, withAdminAuth)(getUsers)
+export const PUT = combineWithRateLimit(withAdminRateLimit, withAdminAuth)(updateUser)
+export const DELETE = combineWithRateLimit(withAdminRateLimit, withAdminAuth)(deleteUser)

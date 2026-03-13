@@ -27,7 +27,7 @@ const customJestConfig = {
     },
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@?fast-check)/)'
+    'node_modules/(?!(jose|@?fast-check|bson|mongodb)/)'
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

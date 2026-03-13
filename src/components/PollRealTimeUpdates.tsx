@@ -166,6 +166,13 @@ export function usePollWithRealTime(initialPoll: any) {
   const [poll, setPoll] = useState(initialPoll)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
 
+  // Update poll when initialPoll changes
+  useEffect(() => {
+    if (initialPoll) {
+      setPoll(initialPoll)
+    }
+  }, [initialPoll])
+
   const handlePollUpdate = (updatedData: any) => {
     setPoll((prevPoll: any) => ({
       ...prevPoll,

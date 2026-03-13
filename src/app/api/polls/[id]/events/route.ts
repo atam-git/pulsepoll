@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { RealTimeEngine } from '@/services/realtime'
+import { RateLimitService, RateLimitConfigs } from '@/services/rateLimit'
 import connectDB from '@/lib/mongodb'
 import Poll from '@/models/Poll'
 import { getServerSession } from 'next-auth'
@@ -14,6 +15,31 @@ export async function GET(
 ) {
   try {
     const { id: pollId } = await params
+
+    // Apply rate limiting for real-time connections
+    const rateLimitResult = await RateLimitService.checkRateLimit(
+      request,
+      RateLimitConfigs.realtime
+    )
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Rate limit exceeded',
+          message: 'Too many real-time connection attempts. Please wait before reconnecting.',
+          retryAfter: rateLimitResult.retryAfter
+        },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': rateLimitResult.retryAfter?.toString() || '60',
+            'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-RateLimit-Reset': rateLimitResult.resetTime.toString()
+          }
+        }
+      )
+    }
 
     // Validate poll exists and is accessible
     await connectDB()
@@ -46,14 +72,17 @@ export async function GET(
       userId
     )
 
-    // Set SSE headers
+    // Set SSE headers with rate limit information
     const headers = new Headers({
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
       'Connection': 'keep-alive',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET',
-      'Access-Control-Allow-Headers': 'Cache-Control'
+      'Access-Control-Allow-Headers': 'Cache-Control',
+      'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+      'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+      'X-RateLimit-Reset': rateLimitResult.resetTime.toString()
     })
 
     console.log(`SSE connection established for poll ${pollId}, connection ${connectionId}`)
