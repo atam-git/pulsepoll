@@ -3,11 +3,18 @@
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function Navigation() {
   const { data: session, status } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Hide navigation on vote pages
+  if (pathname?.startsWith('/vote/')) {
+    return null
+  }
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen)
@@ -22,26 +29,20 @@ export default function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="text-xl sm:text-2xl font-bold text-blue-600" onClick={closeMobileMenu}>
-            PulsePoll
+          <Link href="/" className="flex items-center" onClick={closeMobileMenu}>
+            <img 
+              src="/Connect Nigeria (1).png" 
+              alt="Connect Nigeria" 
+              className="h-8 object-contain"
+            />
           </Link>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/directory" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Browse Polls
-            </Link>
-            
             {status === 'loading' ? (
               <div className="text-gray-600">Loading...</div>
             ) : session ? (
               <div className="flex items-center space-x-4">
-                <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/poll/create" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-                  Create Poll
-                </Link>
                 <button
                   onClick={() => signOut()}
                   className="text-gray-600 hover:text-gray-900 transition-colors"
@@ -54,7 +55,7 @@ export default function Navigation() {
                 <Link href="/auth/login" className="text-gray-600 hover:text-gray-900 transition-colors">
                   Sign In
                 </Link>
-                <Link href="/auth/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                <Link href="/auth/register" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
                   Sign Up
                 </Link>
               </div>
@@ -81,32 +82,10 @@ export default function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <div className="flex flex-col space-y-4">
-              <Link 
-                href="/directory" 
-                className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
-                onClick={closeMobileMenu}
-              >
-                Browse Polls
-              </Link>
-              
               {status === 'loading' ? (
                 <div className="text-gray-600 px-2 py-1">Loading...</div>
               ) : session ? (
                 <>
-                  <Link 
-                    href="/dashboard" 
-                    className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
-                    onClick={closeMobileMenu}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link 
-                    href="/poll/create" 
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-center mx-2"
-                    onClick={closeMobileMenu}
-                  >
-                    Create Poll
-                  </Link>
                   <button
                     onClick={() => {
                       signOut()
@@ -128,7 +107,7 @@ export default function Navigation() {
                   </Link>
                   <Link 
                     href="/auth/register" 
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-center mx-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors text-center mx-2"
                     onClick={closeMobileMenu}
                   >
                     Sign Up

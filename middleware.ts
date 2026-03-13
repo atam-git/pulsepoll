@@ -19,44 +19,52 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Public routes that don't require authentication
+  const publicRoutes = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/signin',
+    '/auth/signup',
+    '/auth/reset-password'
+  ]
+
+  // Check if current path is a voting page (public)
+  const isVotingPage = pathname.match(/^\/vote\/[^\/]+$/)
+  
+  // Check if current path is a public auth route
+  const isPublicRoute = publicRoutes.some(route => 
+    pathname.startsWith(route)
+  )
+
+  // Allow access to voting pages and auth routes without authentication
+  if (isVotingPage || isPublicRoute) {
+    return NextResponse.next()
+  }
+
   // Get the token from the request
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET
   })
 
-  // Define protected routes
-  const protectedRoutes = [
-    '/dashboard',
-    '/profile',
-    '/poll/create',
-    '/poll/edit',
-    '/admin'
-  ]
+  // All other routes require authentication
+  if (!token) {
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('callbackUrl', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
 
   // Define admin-only routes
   const adminRoutes = [
     '/admin'
   ]
 
-  // Check if current path requires authentication
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname.startsWith(route)
-  )
-
   const isAdminRoute = adminRoutes.some(route => 
     pathname.startsWith(route)
   )
 
-  // Redirect to login if accessing protected route without authentication
-  if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/auth/signin', request.url)
-    loginUrl.searchParams.set('callbackUrl', pathname)
-    return NextResponse.redirect(loginUrl)
-  }
-
   // Check admin access
-  if (isAdminRoute && (!token || token.role !== 'admin')) {
+  if (isAdminRoute && token.role !== 'admin') {
     return NextResponse.redirect(new URL('/unauthorized', request.url))
   }
 
@@ -85,7 +93,6 @@ export async function middleware(request: NextRequest) {
   // Rate limiting headers (basic implementation)
   const forwarded = request.headers.get('x-forwarded-for')
   const ip = forwarded ? forwarded.split(',')[0] : 'unknown'
-  const rateLimitKey = `rate_limit_${ip}`
   
   // In production, you'd use Redis or a proper rate limiting service
   // For now, we'll just add the headers without enforcement

@@ -44,7 +44,6 @@ export interface IPoll extends Document {
     updatedAt: Date
     publishedAt?: Date
     totalVotes: number
-    uniqueVoters: number
     viewCount: number
   }
   analytics: {
@@ -230,11 +229,6 @@ const PollSchema = new Schema<IPoll>({
       type: Number,
       default: 0,
       min: [0, 'Total votes cannot be negative']
-    },
-    uniqueVoters: {
-      type: Number,
-      default: 0,
-      min: [0, 'Unique voters cannot be negative']
     },
     viewCount: {
       type: Number,

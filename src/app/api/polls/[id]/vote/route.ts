@@ -205,7 +205,6 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
       poll: {
         id: updatedPoll._id,
         totalVotes: updatedPoll.metadata.totalVotes,
-        uniqueVoters: updatedPoll.metadata.uniqueVoters,
         options: updatedPoll.options.map((option: any) => ({
           id: option.id,
           text: option.text,
@@ -384,8 +383,7 @@ function formatVoteData(pollType: string, votes: any): any {
 async function updatePollVoteCounts(poll: any, votes: any): Promise<void> {
   const updates: any = {
     $inc: {
-      'metadata.totalVotes': 1,
-      'metadata.uniqueVoters': 1
+      'metadata.totalVotes': 1
     },
     $set: {
       'metadata.updatedAt': new Date()

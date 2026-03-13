@@ -226,7 +226,7 @@ export function PollCreationWizard() {
       }
 
       const data = await response.json()
-      router.push(`/poll/${data.poll?.id || data.id}`)
+      router.push(`/dashboard?poll=${data.poll?.id || data.id}`)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Failed to create poll')
     } finally {
@@ -244,19 +244,19 @@ export function PollCreationWizard() {
               onClick={() => { if (i < step) setStep(i) }}
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
                 i === step
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-green-600 text-white'
                   : i < step
-                  ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                  ? 'bg-green-100 text-green-600 hover:bg-green-200'
                   : 'bg-gray-200 text-gray-600'
               }`}
             >
               {i + 1}
             </button>
-            <span className={`ml-2 text-sm hidden sm:inline ${i === step ? 'text-blue-600 font-medium' : 'text-gray-700'}`}>
+            <span className={`ml-2 text-sm hidden sm:inline ${i === step ? 'text-green-600 font-medium' : 'text-gray-700'}`}>
               {label}
             </span>
             {i < STEPS.length - 1 && (
-              <div className={`w-12 h-0.5 mx-3 ${i < step ? 'bg-blue-400' : 'bg-gray-200'}`} />
+              <div className={`w-12 h-0.5 mx-3 ${i < step ? 'bg-green-400' : 'bg-gray-200'}`} />
             )}
           </div>
         ))}
@@ -275,7 +275,7 @@ export function PollCreationWizard() {
                 value={formData.title}
                 onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 placeholder="What would you like to ask? (optional)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500"
               />
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
             </div>
@@ -287,7 +287,7 @@ export function PollCreationWizard() {
                 onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Add more context to your poll"
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500"
               />
             </div>
 
@@ -303,11 +303,11 @@ export function PollCreationWizard() {
                       onClick={() => setFormData(prev => ({ ...prev, type: pt.value }))}
                       className={`flex items-start p-4 border-2 rounded-lg text-left transition-colors ${
                         formData.type === pt.value
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-green-500 bg-green-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <Icon className="w-6 h-6 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                      <Icon className="w-6 h-6 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
                       <div>
                         <div className="font-medium text-gray-900">{pt.label}</div>
                         <div className="text-sm text-gray-600">{pt.description}</div>
@@ -326,13 +326,13 @@ export function PollCreationWizard() {
             <h2 className="text-xl font-semibold text-gray-900">Poll Options</h2>
 
             {formData.type === 'yesno' ? (
-              <div className="text-gray-600 bg-blue-50 p-4 rounded-lg">
+              <div className="text-gray-600 bg-green-50 p-4 rounded-lg">
                 Yes/No polls automatically have two options: <strong>Yes</strong> and <strong>No</strong>.
               </div>
             ) : (
               <>
                 {errors.options && <p className="text-sm text-red-600">{errors.options}</p>}
-                <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg mb-4">
+                <div className="text-sm text-gray-600 bg-green-50 p-3 rounded-lg mb-4">
                   💡 <strong>Tip:</strong> Each option needs either text, an image, or both. You can create image-only options by uploading an image without adding text.
                 </div>
                 <div className="space-y-3">
@@ -345,7 +345,7 @@ export function PollCreationWizard() {
                           value={option.text}
                           onChange={e => updateOption(option.id, e.target.value)}
                           placeholder={`Option ${index + 1} (optional if image added)`}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500"
                         />
                         <button
                           onClick={() => removeOption(option.id)}
@@ -406,7 +406,7 @@ export function PollCreationWizard() {
 
                 <button
                   onClick={addOption}
-                  className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="flex items-center gap-2 text-sm text-green-600 hover:text-green-700 font-medium"
                 >
                   <PlusIcon className="w-4 h-4" />
                   Add Option
@@ -426,7 +426,7 @@ export function PollCreationWizard() {
               <select
                 value={formData.settings.privacy}
                 onChange={e => setFormData(prev => ({ ...prev, settings: { ...prev.settings, privacy: e.target.value as PollSettings['privacy'] } }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900"
               >
                 <option value="public">Public - Anyone can find and vote</option>
                 <option value="unlisted">Unlisted - Only people with the link can vote</option>
@@ -440,7 +440,7 @@ export function PollCreationWizard() {
                 type="datetime-local"
                 value={formData.settings.expirationDate}
                 onChange={e => setFormData(prev => ({ ...prev, settings: { ...prev.settings, expirationDate: e.target.value } }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900"
               />
             </div>
 
@@ -452,7 +452,7 @@ export function PollCreationWizard() {
                 value={formData.settings.maxVotes}
                 onChange={e => setFormData(prev => ({ ...prev, settings: { ...prev.settings, maxVotes: e.target.value ? parseInt(e.target.value) : '' } }))}
                 placeholder="Unlimited"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500"
               />
             </div>
 
@@ -464,7 +464,7 @@ export function PollCreationWizard() {
               <button
                 onClick={() => setFormData(prev => ({ ...prev, settings: { ...prev.settings, allowAnonymous: !prev.settings.allowAnonymous } }))}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  formData.settings.allowAnonymous ? 'bg-blue-600' : 'bg-gray-300'
+                  formData.settings.allowAnonymous ? 'bg-green-600' : 'bg-gray-300'
                 }`}
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -481,7 +481,7 @@ export function PollCreationWizard() {
               <button
                 onClick={() => setFormData(prev => ({ ...prev, settings: { ...prev.settings, requireCaptcha: !prev.settings.requireCaptcha } }))}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  formData.settings.requireCaptcha ? 'bg-blue-600' : 'bg-gray-300'
+                  formData.settings.requireCaptcha ? 'bg-green-600' : 'bg-gray-300'
                 }`}
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -581,7 +581,7 @@ export function PollCreationWizard() {
           {step < STEPS.length - 1 ? (
             <button
               onClick={nextStep}
-              className="flex items-center gap-1 px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-1 px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
             >
               Next
               <ChevronRightIcon className="w-4 h-4" />
@@ -590,7 +590,7 @@ export function PollCreationWizard() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
             >
               {submitting ? 'Creating...' : 'Create Poll'}
             </button>

@@ -123,7 +123,6 @@ async function createPoll(req: AuthenticatedRequest) {
       },
       metadata: {
         totalVotes: 0,
-        uniqueVoters: 0,
         viewCount: 0
       },
       moderation: {

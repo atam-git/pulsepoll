@@ -13,7 +13,6 @@ interface Poll {
   updatedAt: string
   metadata: {
     totalVotes: number
-    uniqueVoters: number
     viewCount: number
   }
   settings: {
@@ -24,12 +23,13 @@ interface Poll {
 
 interface UserPollDashboardProps {
   userId: string
+  onPollSelect?: (pollId: string) => void
 }
 
 type SortOption = 'newest' | 'oldest' | 'most_votes' | 'least_votes' | 'title_asc' | 'title_desc'
 type FilterOption = 'all' | 'active' | 'inactive' | 'expired' | 'draft'
 
-export function UserPollDashboard({ userId }: UserPollDashboardProps) {
+export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardProps) {
   const [polls, setPolls] = useState<Poll[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -154,7 +154,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
   if (loading && polls.length === 0) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
       </div>
     )
   }
@@ -236,7 +236,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               placeholder="Search polls..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             />
           </div>
 
@@ -245,7 +245,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
             <select
               value={filterBy}
               onChange={(e) => setFilterBy(e.target.value as FilterOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
             >
               <option value="all">All Polls</option>
               <option value="active">Active</option>
@@ -258,7 +258,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -271,7 +271,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
             {/* Create New Poll Button */}
             <Link
               href="/poll/create"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
             >
               Create Poll
             </Link>
@@ -308,7 +308,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
           </p>
           <Link
             href="/poll/create"
-            className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
           >
             Create Your First Poll
           </Link>
@@ -322,12 +322,21 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
-                        <Link 
-                          href={`/poll/${poll.id}`}
-                          className="hover:text-blue-600 transition-colors"
-                        >
-                          {poll.title || 'Untitled Poll'}
-                        </Link>
+                        {onPollSelect ? (
+                          <button
+                            onClick={() => onPollSelect(poll.id)}
+                            className="hover:text-green-600 transition-colors text-left"
+                          >
+                            {poll.title || 'Untitled Poll'}
+                          </button>
+                        ) : (
+                          <Link 
+                            href={`/poll/${poll.id}`}
+                            className="hover:text-green-600 transition-colors"
+                          >
+                            {poll.title || 'Untitled Poll'}
+                          </Link>
+                        )}
                       </h3>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(isExpired(poll) ? 'expired' : poll.status)}`}>
                         {isExpired(poll) ? 'Expired' : poll.status}
@@ -343,7 +352,6 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                     
                     <div className="flex items-center space-x-6 text-sm text-gray-600">
                       <span>📊 {poll.metadata.totalVotes} votes</span>
-                      <span>👥 {poll.metadata.uniqueVoters} voters</span>
                       <span>👁️ {poll.metadata.viewCount} views</span>
                       <span>📅 {formatDate(poll.createdAt)}</span>
                       {poll.settings.expiresAt && (
@@ -353,18 +361,29 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                   </div>
 
                   <div className="flex items-center space-x-2 ml-4">
-                    <Link
-                      href={`/poll/${poll.id}`}
+                    {onPollSelect ? (
+                      <button
+                        onClick={() => onPollSelect(poll.id)}
+                        className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                      >
+                        View
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/poll/${poll.id}`}
+                        className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                      >
+                        View
+                      </Link>
+                    )}
+                    <a
+                      href={`/vote/${poll.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                     >
-                      View
-                    </Link>
-                    <Link
-                      href={`/poll/${poll.id}`}
-                      className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                    >
-                      Edit
-                    </Link>
+                      Vote
+                    </a>
                     <button
                       onClick={() => handleDuplicatePoll(poll.id)}
                       className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
@@ -410,7 +429,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                     onClick={() => setCurrentPage(page)}
                     className={`px-3 py-1 text-sm border rounded ${
                       currentPage === page
-                        ? 'bg-blue-500 text-white border-blue-500'
+                        ? 'bg-green-500 text-white border-green-500'
                         : 'border-gray-300 hover:bg-gray-50'
                     }`}
                   >

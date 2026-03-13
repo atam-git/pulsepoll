@@ -40,14 +40,12 @@ export class QueryOptimizer {
               $group: {
                 _id: null,
                 totalVotes: { $sum: 1 },
-                uniqueVoters: { $addToSet: '$voterInfo.ipAddress' },
                 optionVotes: { $push: '$voteData.selectedOptions' },
               },
             },
             {
               $project: {
                 totalVotes: 1,
-                uniqueVoters: { $size: '$uniqueVoters' },
                 optionVotes: 1,
               },
             },
@@ -114,7 +112,6 @@ export class QueryOptimizer {
       status: 1,
       options: { id: 1, text: 1, voteCount: 1 },
       'metadata.totalVotes': 1,
-      'metadata.uniqueVoters': 1,
       'metadata.viewCount': 1,
       createdAt: 1,
       creatorId: 1,
@@ -166,7 +163,6 @@ export class QueryOptimizer {
       status: 1,
       options: { id: 1, text: 1, voteCount: 1 },
       'metadata.totalVotes': 1,
-      'metadata.uniqueVoters': 1,
       'metadata.viewCount': 1,
       'settings.expiresAt': 1,
       createdAt: 1,
@@ -207,7 +203,6 @@ export class QueryOptimizer {
               $project: {
                 _id: 0,
                 totalVotes: 1,
-                uniqueVoters: { $size: '$uniqueIPs' },
                 firstVote: 1,
                 lastVote: 1,
               },
@@ -246,7 +241,7 @@ export class QueryOptimizer {
     ])
 
     const result = {
-      summary: stats[0]?.summary[0] || { totalVotes: 0, uniqueVoters: 0 },
+      summary: stats[0]?.summary[0] || { totalVotes: 0 },
       byOption: stats[0]?.byOption || [],
       byDay: stats[0]?.byDay || [],
       byHour: stats[0]?.byHour || [],

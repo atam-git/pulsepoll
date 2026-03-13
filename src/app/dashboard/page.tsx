@@ -21,11 +21,15 @@ export default function DashboardPage() {
     setLoading(false)
   }, [status, router])
 
+  const handlePollSelect = (pollId: string) => {
+    router.push(`/dashboard/poll/${pollId}`)
+  }
+
   if (loading || status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
           <p>Loading dashboard...</p>
         </div>
       </div>
@@ -40,7 +44,7 @@ export default function DashboardPage() {
           <p className="text-gray-600 mb-4">You need to be logged in to access the dashboard.</p>
           <button
             onClick={() => router.push('/auth/login')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           >
             Login
           </button>
@@ -49,6 +53,7 @@ export default function DashboardPage() {
     )
   }
 
+  // Always show main dashboard
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -60,8 +65,11 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* User Poll Dashboard */}
-        <UserPollDashboard userId={session.user.id} />
+        {/* User Poll Dashboard with poll selection callback */}
+        <UserPollDashboard 
+          userId={session.user.id} 
+          onPollSelect={handlePollSelect}
+        />
       </div>
     </div>
   )

@@ -23,7 +23,6 @@ export interface PublicPollsQuery {
 
 export interface PopularityMetrics {
   totalVotes: number
-  uniqueVoters: number
   recentActivity: number // votes in last 24 hours
   trendingScore: number
   engagementRate: number // votes per view
@@ -41,7 +40,6 @@ export interface PublicPollResponse {
   popularity: PopularityMetrics
   metadata: {
     totalVotes: number
-    uniqueVoters: number
     viewCount: number
     status: string
   }
@@ -212,7 +210,7 @@ async function getPublicPolls(req: AuthenticatedRequest) {
         sortOptions = { createdAt: 1 }
         break
       case 'popular':
-        sortOptions = { 'metadata.totalVotes': -1, 'metadata.uniqueVoters': -1 }
+        sortOptions = { 'metadata.totalVotes': -1 }
         break
       case 'votes':
         sortOptions = { 'metadata.totalVotes': -1 }
@@ -272,7 +270,6 @@ async function getPublicPolls(req: AuthenticatedRequest) {
             trendingScore: {
               $add: [
                 { $multiply: ['$metadata.totalVotes', 1] },
-                { $multiply: ['$metadata.uniqueVoters', 2] },
                 { $multiply: ['$metadata.viewCount', 0.1] },
                 {
                   $multiply: [
@@ -355,7 +352,6 @@ async function getPublicPolls(req: AuthenticatedRequest) {
           popularity,
           metadata: {
             totalVotes: poll.metadata?.totalVotes || 0,
-            uniqueVoters: poll.metadata?.uniqueVoters || 0,
             viewCount: poll.metadata?.viewCount || 0,
             status: poll.status
           },
@@ -426,7 +422,6 @@ async function calculatePopularityMetrics(poll: any): Promise<PopularityMetrics>
   
   // Basic metrics from poll metadata
   const totalVotes = poll.metadata?.totalVotes || 0
-  const uniqueVoters = poll.metadata?.uniqueVoters || 0
   const viewCount = poll.metadata?.viewCount || 0
 
   // Calculate recent activity (simplified - using updatedAt as proxy)
@@ -439,14 +434,12 @@ async function calculatePopularityMetrics(poll: any): Promise<PopularityMetrics>
   const ageInDays = Math.max(1, (now.getTime() - new Date(poll.createdAt).getTime()) / (1000 * 60 * 60 * 24))
   const trendingScore = (
     (totalVotes * 1) +
-    (uniqueVoters * 2) +
     (viewCount * 0.1) +
     (recentActivity * 5)
   ) / Math.log(ageInDays + 1) // Decay over time
 
   return {
     totalVotes,
-    uniqueVoters,
     recentActivity,
     trendingScore: Math.round(trendingScore * 100) / 100,
     engagementRate: Math.round(engagementRate * 10) / 10

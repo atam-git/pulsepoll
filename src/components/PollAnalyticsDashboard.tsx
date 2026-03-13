@@ -147,16 +147,11 @@ export function PollAnalyticsDashboard({
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <MetricCard
             title="Total Votes"
             value={analytics.totalVotes}
             icon="📊"
-          />
-          <MetricCard
-            title="Unique Voters"
-            value={analytics.uniqueVoters}
-            icon="👥"
           />
           <MetricCard
             title="Response Rate"
@@ -314,7 +309,7 @@ export function PollAnalyticsDashboard({
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {analytics.timeline.slice(-10).map((entry, index) => (
               <div key={index} className="flex justify-between items-center text-sm">
-                <span>{entry.timestamp.toLocaleString()}</span>
+                <span>{new Date(entry.timestamp).toLocaleString()}</span>
                 <span>Vote #{entry.cumulativeVotes}</span>
               </div>
             ))}
@@ -330,7 +325,7 @@ export function PollAnalyticsDashboard({
             <div className="flex justify-between items-center">
               <span>Peak voting time:</span>
               <span className="font-medium">
-                {analytics.peakVotingTime.toLocaleTimeString([], { 
+                {new Date(analytics.peakVotingTime).toLocaleTimeString([], { 
                   hour: '2-digit', 
                   minute: '2-digit' 
                 })}

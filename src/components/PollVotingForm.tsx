@@ -233,7 +233,7 @@ export function PollVotingForm({ poll, onVoteSubmitted }: PollVotingFormProps) {
       <button
         onClick={handleSubmit}
         disabled={submitting}
-        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
       >
         {submitting ? 'Submitting...' : 'Submit Vote'}
       </button>

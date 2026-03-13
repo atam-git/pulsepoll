@@ -83,7 +83,7 @@ export default function DirectoryPage() {
             </div>
             <button
               type="submit"
-              className="w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium"
+              className="w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base font-medium"
             >
               Search
             </button>
@@ -141,7 +141,7 @@ export default function DirectoryPage() {
                 </p>
                 <Link
                   href="/poll/create"
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
+                  className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
                 >
                   Create Poll
                 </Link>
@@ -167,7 +167,7 @@ export default function DirectoryPage() {
                           </div>
                           <Link
                             href={`/poll/${pollId}`}
-                            className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
+                            className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors flex-shrink-0"
                           >
                             View
                           </Link>
@@ -221,7 +221,7 @@ export default function DirectoryPage() {
                           </div>
                           <Link
                             href={`/poll/${pollId}`}
-                            className="ml-3 px-3 sm:px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
+                            className="ml-3 px-3 sm:px-4 py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors flex-shrink-0"
                           >
                             View
                           </Link>

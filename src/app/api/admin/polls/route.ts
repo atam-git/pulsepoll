@@ -58,7 +58,6 @@ async function getPolls(req: AuthenticatedRequest) {
         creatorId: poll.creatorId._id.toString(),
         creatorEmail: poll.creatorId.email,
         totalVotes: poll.metadata.totalVotes,
-        uniqueVoters: poll.metadata.uniqueVoters,
         createdAt: poll.metadata.createdAt,
         updatedAt: poll.metadata.updatedAt,
         moderation: {

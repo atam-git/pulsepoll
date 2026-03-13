@@ -5,7 +5,6 @@ import { ReferralTracker } from './referral'
 
 export interface PollAnalytics {
   totalVotes: number
-  uniqueVoters: number
   responseRate: number
   completionRate: number
   averageTimeToVote?: number
@@ -74,9 +73,6 @@ export class AnalyticsEngine {
     
     // Basic metrics
     const totalVotes = votes.length
-    const uniqueVoters = new Set(votes.map(vote => 
-      vote.voterId || vote.voterInfo.ipAddress
-    )).size
 
     // Calculate response and completion rates
     const responseRate = poll.metadata.viewCount > 0 
@@ -100,7 +96,6 @@ export class AnalyticsEngine {
 
     return {
       totalVotes,
-      uniqueVoters,
       responseRate,
       completionRate,
       averageTimeToVote,
@@ -482,7 +477,6 @@ export class AnalyticsHelper {
     
     return {
       totalVotes: analytics.totalVotes,
-      uniqueVoters: analytics.uniqueVoters,
       responseRate: Math.round(analytics.responseRate * 10) / 10,
       completionRate: Math.round(analytics.completionRate * 10) / 10,
       topOption: analytics.optionAnalytics

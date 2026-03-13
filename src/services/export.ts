@@ -338,7 +338,6 @@ export class ExportService {
       lines.push('')
       lines.push('# Analytics Summary')
       lines.push(`Total Votes,${data.analytics.totalVotes}`)
-      lines.push(`Unique Voters,${data.analytics.uniqueVoters}`)
       lines.push(`Response Rate,${data.analytics.responseRate.toFixed(2)}%`)
       lines.push(`Completion Rate,${data.analytics.completionRate.toFixed(2)}%`)
     }

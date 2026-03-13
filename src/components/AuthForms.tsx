@@ -62,7 +62,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="w-full py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
         >
           {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
@@ -70,13 +70,13 @@ export function LoginForm() {
 
       <div className="mt-4 text-center text-sm text-gray-600 space-y-2">
         <p>
-          <Link href="/auth/forgot-password" className="text-blue-600 hover:text-blue-700">
+          <Link href="/auth/forgot-password" className="text-green-600 hover:text-green-700">
             Forgot your password?
           </Link>
         </p>
         <p>
           Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link href="/auth/register" className="text-green-600 hover:text-green-700 font-medium">
             Sign Up
           </Link>
         </p>
@@ -165,7 +165,7 @@ export function RegisterForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="w-full py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
         >
           {isLoading ? 'Creating account...' : 'Create Account'}
         </button>
@@ -173,7 +173,7 @@ export function RegisterForm() {
 
       <p className="mt-4 text-center text-sm text-gray-600">
         Already have an account?{' '}
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
+        <Link href="/auth/login" className="text-green-600 hover:text-green-700 font-medium">
           Sign In
         </Link>
       </p>
@@ -224,7 +224,7 @@ export function ForgotPasswordForm() {
         <p className="text-gray-600 mb-6">
           If an account exists for <strong>{email}</strong>, we&apos;ve sent password reset instructions.
         </p>
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+        <Link href="/auth/login" className="text-green-600 hover:text-green-700 font-medium text-sm">
           Back to Sign In
         </Link>
       </div>
@@ -260,14 +260,14 @@ export function ForgotPasswordForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="w-full py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
         >
           {loading ? 'Sending...' : 'Send Reset Link'}
         </button>
       </form>
 
       <p className="mt-4 text-center text-sm text-gray-600">
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700">
+        <Link href="/auth/login" className="text-green-600 hover:text-green-700">
           Back to Sign In
         </Link>
       </p>

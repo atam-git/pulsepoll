@@ -64,6 +64,25 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
     // Check if poll has expired
     const isExpired = poll.settings.expiresAt && new Date(poll.settings.expiresAt) <= new Date()
 
+    // Increment view count for public polls or when accessed by non-owner
+    // Don't increment for the poll owner to avoid inflating view counts
+    const shouldIncrementView = 
+      poll.privacy === 'public' && 
+      (!req.user || req.user.id !== poll.creatorId._id?.toString())
+
+    if (shouldIncrementView) {
+      try {
+        await Poll.findByIdAndUpdate(
+          id,
+          { $inc: { 'metadata.viewCount': 1 } },
+          { new: false } // Don't return updated document to save bandwidth
+        )
+      } catch (viewError) {
+        console.error('Error incrementing view count:', viewError)
+        // Don't fail the request if view tracking fails
+      }
+    }
+
     return NextResponse.json({
       success: true,
       poll: {
@@ -76,7 +95,9 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
         privacy: poll.privacy,
         metadata: {
           ...poll.metadata,
-          isExpired
+          isExpired,
+          // Include incremented view count in response for public polls
+          viewCount: shouldIncrementView ? (poll.metadata.viewCount || 0) + 1 : poll.metadata.viewCount
         },
         creatorId: poll.creatorId,
         createdAt: poll.createdAt,
