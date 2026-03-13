@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { BarChart3, FileText, Users, TrendingUp, LogOut } from 'lucide-react'
 
 export default function AdminLayout({
   children,
@@ -19,7 +20,7 @@ export default function AdminLayout({
     if (status === 'loading') return
 
     if (status === 'unauthenticated') {
-      router.push('/auth/signin?callbackUrl=/admin')
+      router.push('/auth/login?callbackUrl=/admin')
       return
     }
 
@@ -33,10 +34,27 @@ export default function AdminLayout({
 
   if (loading || status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading admin panel...</p>
+      <div 
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div 
+            style={{
+              width: '48px',
+              height: '48px',
+              border: '3px solid var(--color-light-gray)',
+              borderTop: '3px solid var(--color-primary)',
+              borderRadius: '50%',
+              margin: '0 auto 16px',
+              animation: 'spin 1s linear infinite'
+            }}
+          />
+          <p style={{ color: 'var(--color-mid-gray)' }}>Loading admin panel...</p>
         </div>
       </div>
     )
@@ -47,33 +65,84 @@ export default function AdminLayout({
   }
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: '📊' },
-    { name: 'Polls', href: '/admin/polls', icon: '📋' },
-    { name: 'Users', href: '/admin/users', icon: '👥' },
-    { name: 'Analytics', href: '/admin/analytics', icon: '📈' },
+    { name: 'Dashboard', href: '/admin', icon: BarChart3 },
+    { name: 'Polls', href: '/admin/polls', icon: FileText },
+    { name: 'Users', href: '/admin/users', icon: Users },
+    { name: 'Analytics', href: '/admin/analytics', icon: TrendingUp },
   ]
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div style={{ minHeight: '100vh', background: '#F8F9FA' }}>
       {/* Top Navigation Bar */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link href="/admin" className="text-xl font-bold text-blue-600">
-                  PulsePoll Admin
-                </Link>
+      <nav 
+        style={{
+          background: '#FFFFFF',
+          boxShadow: 'var(--shadow-sm)',
+          borderBottom: '1px solid #E9ECEF',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
+        }}
+      >
+        <div className="container mx-auto" style={{ padding: '0 16px' }}>
+          <div 
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              height: '64px'
+            }}
+          >
+            <Link 
+              href="/admin" 
+              style={{
+                fontSize: '18px',
+                fontWeight: 700,
+                fontFamily: 'var(--font-heading)',
+                color: 'var(--color-primary)',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <div 
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: 'var(--color-primary)',
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 'bold'
+                }}
+              >
+                C
               </div>
-            </div>
-            <div className="flex items-center space-x-4">
+              Admin
+            </Link>
+            <div 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '24px'
+              }}
+            >
               <Link
                 href="/dashboard"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: 'var(--color-dark-gray)',
+                  textDecoration: 'none'
+                }}
               >
                 User Dashboard
               </Link>
-              <div className="text-sm text-gray-700">
+              <div style={{ fontSize: '14px', color: 'var(--color-mid-gray)' }}>
                 {session.user.email}
               </div>
             </div>
@@ -81,27 +150,42 @@ export default function AdminLayout({
         </div>
       </nav>
 
-      <div className="flex">
+      <div style={{ display: 'flex', minHeight: 'calc(100vh - 64px)' }}>
         {/* Sidebar Navigation */}
-        <aside className="w-64 bg-white shadow-sm min-h-[calc(100vh-4rem)]">
-          <nav className="mt-5 px-2">
-            <div className="space-y-1">
+        <aside 
+          style={{
+            width: '256px',
+            background: '#FFFFFF',
+            boxShadow: 'var(--shadow-sm)',
+            borderRight: '1px solid #E9ECEF',
+            overflowY: 'auto'
+          }}
+        >
+          <nav style={{ padding: '20px 8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {navigation.map((item) => {
+                const Icon = item.icon
                 const isActive = pathname === item.href
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`
-                      group flex items-center px-3 py-2 text-sm font-medium rounded-md
-                      ${
-                        isActive
-                          ? 'bg-blue-50 text-blue-600'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }
-                    `}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      borderRadius: 'var(--radius-md)',
+                      textDecoration: 'none',
+                      color: isActive ? 'var(--color-primary)' : 'var(--color-dark-gray)',
+                      background: isActive ? 'var(--color-primary-light)' : 'transparent',
+                      transition: 'all 0.2s ease',
+                      cursor: 'pointer'
+                    }}
                   >
-                    <span className="mr-3 text-lg">{item.icon}</span>
+                    <Icon size={20} />
                     {item.name}
                   </Link>
                 )
@@ -111,7 +195,14 @@ export default function AdminLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main 
+          style={{
+            flex: 1,
+            padding: '32px 32px',
+            background: '#F8F9FA',
+            overflowY: 'auto'
+          }}
+        >
           {children}
         </main>
       </div>

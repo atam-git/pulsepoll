@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { BarChart3, CheckCircle2, PieChart, Eye, Search as SearchIcon, Edit2, Copy, Trash2 } from 'lucide-react'
 
 interface Poll {
   id: string
@@ -93,7 +94,6 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
         throw new Error('Failed to delete poll')
       }
 
-      // Refresh the polls list
       fetchPolls()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to delete poll')
@@ -111,11 +111,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
       }
 
       const data = await response.json()
-      
-      // Refresh the polls list
       fetchPolls()
-      
-      // Optionally redirect to the new poll
       alert(`Poll duplicated successfully! New poll ID: ${data.poll.id}`)
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to duplicate poll')
@@ -123,7 +119,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-NG', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -135,15 +131,15 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800'
+        return { bg: 'rgba(40, 167, 69, 0.1)', color: '#28A745' }
       case 'inactive':
-        return 'bg-gray-100 text-gray-800'
+        return { bg: 'rgba(108, 117, 125, 0.1)', color: '#6C757D' }
       case 'expired':
-        return 'bg-red-100 text-red-800'
+        return { bg: 'rgba(220, 53, 69, 0.1)', color: '#DC3545' }
       case 'draft':
-        return 'bg-yellow-100 text-yellow-800'
+        return { bg: 'rgba(255, 193, 7, 0.1)', color: '#FFC107' }
       default:
-        return 'bg-gray-100 text-gray-800'
+        return { bg: 'rgba(108, 117, 125, 0.1)', color: '#6C757D' }
     }
   }
 
@@ -153,99 +149,118 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
 
   if (loading && polls.length === 0) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid var(--color-light-gray)',
+            borderTop: '3px solid var(--color-primary)',
+            borderRadius: '50%',
+            margin: '0 auto 16px',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <p style={{ color: 'var(--color-mid-gray)' }}>Loading your polls...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">📊</span>
+      <div 
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '16px'
+        }}
+      >
+        {[
+          { icon: BarChart3, label: 'Total Polls', value: totalPolls, color: 'var(--color-primary)' },
+          { icon: CheckCircle2, label: 'Active Polls', value: polls.filter(p => p.status === 'active' && !isExpired(p)).length, color: 'var(--color-success)' },
+          { icon: PieChart, label: 'Total Votes', value: polls.reduce((sum, poll) => sum + poll.metadata.totalVotes, 0), color: 'var(--color-accent)' },
+          { icon: Eye, label: 'Total Views', value: polls.reduce((sum, poll) => sum + poll.metadata.viewCount, 0), color: '#17A2B8' }
+        ].map((stat, idx) => {
+          const Icon = stat.icon
+          return (
+            <div 
+              key={idx}
+              className="card"
+              style={{ padding: '24px', background: '#FFFFFF' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    background: stat.color,
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#FFFFFF',
+                    flexShrink: 0
+                  }}
+                >
+                  <Icon size={28} />
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-mid-gray)', marginBottom: '4px' }}>
+                    {stat.label}
+                  </p>
+                  <p 
+                    style={{
+                      fontSize: '28px',
+                      fontWeight: 800,
+                      color: 'var(--color-black)',
+                      lineHeight: '1'
+                    }}
+                  >
+                    {stat.value}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Polls</p>
-              <p className="text-2xl font-bold text-gray-900">{totalPolls}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">✅</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Active Polls</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {polls.filter(p => p.status === 'active' && !isExpired(p)).length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">👥</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Votes</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {polls.reduce((sum, poll) => sum + poll.metadata.totalVotes, 0)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-bold">👁️</span>
-              </div>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Views</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {polls.reduce((sum, poll) => sum + poll.metadata.viewCount, 0)}
-              </p>
-            </div>
-          </div>
-        </div>
+          )
+        })}
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-          {/* Search */}
-          <div className="flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search polls..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+      <div 
+        className="card"
+        style={{ padding: '24px', background: '#FFFFFF' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ flex: '1', minWidth: '200px' }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  placeholder="Search polls..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%', paddingLeft: '36px' }}
+                />
+                <SearchIcon 
+                  size={18} 
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'var(--color-mid-gray)'
+                  }}
+                />
+              </div>
+            </div>
 
-          <div className="flex space-x-4">
-            {/* Filter */}
             <select
               value={filterBy}
               onChange={(e) => setFilterBy(e.target.value as FilterOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
+              style={{ padding: '12px 20px', minWidth: '150px' }}
             >
               <option value="all">All Polls</option>
               <option value="active">Active</option>
@@ -254,11 +269,11 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               <option value="draft">Draft</option>
             </select>
 
-            {/* Sort */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="input-field"
+              style={{ padding: '12px 20px', minWidth: '150px' }}
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -268,11 +283,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               <option value="title_desc">Title Z-A</option>
             </select>
 
-            {/* Create New Poll Button */}
-            <Link
-              href="/poll/create"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
+            <Link href="/poll/create" className="btn btn-primary">
               Create Poll
             </Link>
           </div>
@@ -281,11 +292,20 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
 
       {/* Polls List */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600">{error}</p>
+        <div 
+          style={{
+            background: 'rgba(220, 53, 69, 0.1)',
+            border: '1px solid #DC3545',
+            borderRadius: 'var(--radius-lg)',
+            padding: '16px',
+            color: '#DC3545'
+          }}
+        >
+          <p style={{ marginBottom: '12px' }}>{error}</p>
           <button
             onClick={fetchPolls}
-            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="btn btn-primary"
+            style={{ padding: '8px 16px', fontSize: '14px' }}
           >
             Retry
           </button>
@@ -293,55 +313,132 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
       )}
 
       {polls.length === 0 && !loading ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <div className="text-gray-400 mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No polls found</h3>
-          <p className="text-gray-600 mb-4">
+        <div 
+          className="card"
+          style={{ 
+            padding: '48px 32px',
+            textAlign: 'center',
+            background: '#FFFFFF'
+          }}
+        >
+          <BarChart3 
+            size={64} 
+            style={{
+              color: 'var(--color-light-gray)',
+              margin: '0 auto 16px'
+            }}
+          />
+          <h3 
+            style={{
+              fontSize: '18px',
+              fontWeight: 600,
+              color: 'var(--color-black)',
+              marginBottom: '8px'
+            }}
+          >
+            No polls found
+          </h3>
+          <p 
+            style={{
+              fontSize: '14px',
+              color: 'var(--color-mid-gray)',
+              marginBottom: '24px'
+            }}
+          >
             {searchQuery || filterBy !== 'all' 
               ? 'Try adjusting your search or filter criteria.'
               : 'Get started by creating your first poll.'
             }
           </p>
-          <Link
-            href="/poll/create"
-            className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
+          <Link href="/poll/create" className="btn btn-primary">
             Create Your First Poll
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {polls.map((poll) => (
-            <div key={poll.id} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {polls.map((poll) => {
+            const statusInfo = getStatusColor(isExpired(poll) ? 'expired' : poll.status)
+            return (
+              <div 
+                key={poll.id}
+                className="card"
+                style={{ padding: '24px', background: '#FFFFFF' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                      <h3 
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: 600,
+                          color: 'var(--color-black)'
+                        }}
+                      >
                         <Link 
                           href={`/poll/${poll.id}`}
-                          className="hover:text-blue-600 transition-colors"
+                          style={{
+                            color: 'var(--color-primary)',
+                            textDecoration: 'none'
+                          }}
                         >
                           {poll.title}
                         </Link>
                       </h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(isExpired(poll) ? 'expired' : poll.status)}`}>
+                      <span 
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          background: statusInfo.bg,
+                          color: statusInfo.color,
+                          borderRadius: 'var(--radius-full)',
+                          textTransform: 'capitalize'
+                        }}
+                      >
                         {isExpired(poll) ? 'Expired' : poll.status}
                       </span>
-                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full capitalize">
+                      <span 
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          background: 'rgba(108, 117, 125, 0.1)',
+                          color: '#6C757D',
+                          borderRadius: 'var(--radius-full)',
+                          textTransform: 'capitalize'
+                        }}
+                      >
                         {poll.type}
                       </span>
                     </div>
                     
                     {poll.description && (
-                      <p className="text-gray-600 mb-3 line-clamp-2">{poll.description}</p>
+                      <p 
+                        style={{
+                          fontSize: '14px',
+                          color: 'var(--color-mid-gray)',
+                          marginBottom: '12px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical'
+                        }}
+                      >
+                        {poll.description}
+                      </p>
                     )}
                     
-                    <div className="flex items-center space-x-6 text-sm text-gray-500">
+                    <div 
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '24px',
+                        fontSize: '13px',
+                        color: 'var(--color-mid-gray)',
+                        flexWrap: 'wrap'
+                      }}
+                    >
                       <span>📊 {poll.metadata.totalVotes} votes</span>
                       <span>👥 {poll.metadata.uniqueVoters} voters</span>
                       <span>👁️ {poll.metadata.viewCount} views</span>
@@ -352,54 +449,83 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-2 ml-4">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                     <Link
                       href={`/poll/${poll.id}`}
-                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                      className="btn btn-primary"
+                      style={{ padding: '8px 12px', fontSize: '13px' }}
                     >
                       View
                     </Link>
                     <Link
                       href={`/polls/${poll.id}/edit`}
-                      className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                      className="btn btn-secondary"
+                      style={{ padding: '8px 12px', fontSize: '13px' }}
                     >
+                      <Edit2 size={14} style={{ marginRight: '4px' }} />
                       Edit
                     </Link>
                     <button
                       onClick={() => handleDuplicatePoll(poll.id)}
-                      className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                      className="btn btn-ghost"
+                      style={{ padding: '8px 12px', fontSize: '13px' }}
                     >
-                      Duplicate
+                      <Copy size={14} />
                     </button>
                     <button
                       onClick={() => handleDeletePoll(poll.id)}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                      style={{
+                        padding: '8px 12px',
+                        fontSize: '13px',
+                        background: 'rgba(220, 53, 69, 0.1)',
+                        color: '#DC3545',
+                        border: 'none',
+                        borderRadius: 'var(--radius-full)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontWeight: 500,
+                        transition: 'all 0.2s ease'
+                      }}
                     >
-                      Delete
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+        <div 
+          className="card"
+          style={{ padding: '16px', background: '#FFFFFF' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+            <div style={{ fontSize: '13px', color: 'var(--color-mid-gray)' }}>
               Showing {((currentPage - 1) * pollsPerPage) + 1} to {Math.min(currentPage * pollsPerPage, totalPolls)} of {totalPolls} polls
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '13px',
+                  border: '1px solid var(--color-light-gray)',
+                  borderRadius: 'var(--radius-md)',
+                  background: '#FFFFFF',
+                  cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                  opacity: currentPage === 1 ? 0.5 : 1,
+                  color: 'var(--color-dark-gray)'
+                }}
               >
-                Previous
+                ← Previous
               </button>
               
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -408,11 +534,16 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 text-sm border rounded ${
-                      currentPage === page
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'border-gray-300 hover:bg-gray-50'
-                    }`}
+                    style={{
+                      padding: '8px 12px',
+                      fontSize: '13px',
+                      border: currentPage === page ? 'none' : '1px solid var(--color-light-gray)',
+                      borderRadius: 'var(--radius-md)',
+                      background: currentPage === page ? 'var(--color-primary)' : '#FFFFFF',
+                      color: currentPage === page ? '#FFFFFF' : 'var(--color-dark-gray)',
+                      cursor: 'pointer',
+                      fontWeight: currentPage === page ? 600 : 400
+                    }}
                   >
                     {page}
                   </button>
@@ -422,9 +553,18 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               <button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '13px',
+                  border: '1px solid var(--color-light-gray)',
+                  borderRadius: 'var(--radius-md)',
+                  background: '#FFFFFF',
+                  cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                  opacity: currentPage === totalPages ? 0.5 : 1,
+                  color: 'var(--color-dark-gray)'
+                }}
               >
-                Next
+                Next →
               </button>
             </div>
           </div>

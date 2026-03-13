@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { Users, FileText, BarChart3, Zap } from 'lucide-react'
 
 interface DashboardStats {
   totalUsers: number
@@ -45,10 +46,27 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading dashboard...</p>
+      <div 
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '256px'
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div 
+            style={{
+              width: '48px',
+              height: '48px',
+              border: '3px solid var(--color-light-gray)',
+              borderTop: '3px solid var(--color-primary)',
+              borderRadius: '50%',
+              margin: '0 auto 16px',
+              animation: 'spin 1s linear infinite'
+            }}
+          />
+          <p style={{ color: 'var(--color-mid-gray)' }}>Loading dashboard...</p>
         </div>
       </div>
     )
@@ -56,140 +74,295 @@ export default function AdminDashboardPage() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">Error: {error}</p>
+      <div 
+        style={{
+          background: 'rgba(220, 53, 69, 0.1)',
+          border: '1px solid #DC3545',
+          borderRadius: 'var(--radius-lg)',
+          padding: '16px'
+        }}
+      >
+        <p style={{ color: '#DC3545' }}>Error: {error}</p>
       </div>
     )
   }
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-2">
-          Welcome back, {session?.user?.email}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 
+          style={{
+            fontSize: '32px',
+            fontWeight: 800,
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-black)',
+            marginBottom: '8px'
+          }}
+        >
+          Admin Dashboard
+        </h1>
+        <p style={{ fontSize: '16px', color: 'var(--color-mid-gray)' }}>
+          Welcome back, <strong style={{ color: 'var(--color-black)' }}>{session?.user?.email}</strong>
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
-              <span className="text-2xl">👥</span>
+      <div 
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '16px',
+          marginBottom: '32px'
+        }}
+      >
+        {[
+          { icon: Users, label: 'Total Users', value: stats?.totalUsers || 0, color: 'var(--color-primary)' },
+          { icon: FileText, label: 'Total Polls', value: stats?.totalPolls || 0, color: 'var(--color-success)' },
+          { icon: BarChart3, label: 'Total Votes', value: stats?.totalVotes || 0, color: 'var(--color-accent)' },
+          { icon: Zap, label: 'Active Polls', value: stats?.activePolls || 0, color: '#17A2B8' }
+        ].map((stat, idx) => {
+          const Icon = stat.icon
+          return (
+            <div 
+              key={idx}
+              className="card"
+              style={{ padding: '24px', background: '#FFFFFF' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    background: stat.color,
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#FFFFFF',
+                    flexShrink: 0
+                  }}
+                >
+                  <Icon size={28} />
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-mid-gray)', marginBottom: '4px' }}>
+                    {stat.label}
+                  </p>
+                  <p 
+                    style={{
+                      fontSize: '28px',
+                      fontWeight: 800,
+                      color: 'var(--color-black)',
+                      lineHeight: '1'
+                    }}
+                  >
+                    {stat.value}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.totalUsers || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-green-100 rounded-md p-3">
-              <span className="text-2xl">📋</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Polls</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.totalPolls || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-purple-100 rounded-md p-3">
-              <span className="text-2xl">✅</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Votes</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.totalVotes || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-              <span className="text-2xl">🔥</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Polls</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.activePolls || 0}
-              </p>
-            </div>
-          </div>
-        </div>
+          )
+        })}
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-        </div>
-        <div className="p-6">
-          {stats?.recentActivity && stats.recentActivity.length > 0 ? (
-            <div className="space-y-4">
-              {stats.recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <span className="text-xl">
-                      {activity.type === 'user' && '👤'}
-                      {activity.type === 'poll' && '📋'}
-                      {activity.type === 'vote' && '✅'}
-                    </span>
-                  </div>
-                  <div className="ml-3 flex-1">
-                    <p className="text-sm text-gray-900">{activity.description}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(activity.timestamp).toLocaleString()}
-                    </p>
-                  </div>
+      <div 
+        className="card"
+        style={{ padding: '24px', background: '#FFFFFF', marginBottom: '32px' }}
+      >
+        <h2 
+          style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-black)',
+            marginBottom: '20px'
+          }}
+        >
+          Recent Activity
+        </h2>
+        {stats?.recentActivity && stats.recentActivity.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {stats.recentActivity.map((activity, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', paddingBottom: '16px', borderBottom: '1px solid var(--color-light-gray)' }}>
+                <div style={{ fontSize: '20px', flexShrink: 0, marginTop: '2px' }}>
+                  {activity.type === 'user' && '👤'}
+                  {activity.type === 'poll' && '📋'}
+                  {activity.type === 'vote' && '✅'}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-center py-8">No recent activity</p>
-          )}
-        </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: '14px', color: 'var(--color-black)', marginBottom: '4px' }}>
+                    {activity.description}
+                  </p>
+                  <p style={{ fontSize: '12px', color: 'var(--color-mid-gray)' }}>
+                    {new Date(activity.timestamp).toLocaleString('en-NG')}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p 
+            style={{
+              color: 'var(--color-mid-gray)',
+              textAlign: 'center',
+              padding: '32px 16px',
+              fontSize: '14px'
+            }}
+          >
+            No recent activity
+          </p>
+        )}
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div 
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '24px'
+        }}
+      >
         <a
           href="/admin/polls"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+          className="card"
+          style={{
+            padding: '32px',
+            background: '#FFFFFF',
+            textDecoration: 'none',
+            display: 'block',
+            cursor: 'pointer'
+          }}
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Polls</h3>
-          <p className="text-gray-600 text-sm">
+          <div 
+            style={{
+              width: '48px',
+              height: '48px',
+              background: 'var(--color-primary)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FFFFFF',
+              marginBottom: '16px'
+            }}
+          >
+            <FileText size={24} />
+          </div>
+          <h3 
+            style={{
+              fontSize: '18px',
+              fontWeight: 700,
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-black)',
+              marginBottom: '8px'
+            }}
+          >
+            Manage Polls
+          </h3>
+          <p 
+            style={{
+              fontSize: '14px',
+              color: 'var(--color-mid-gray)',
+              lineHeight: '1.6'
+            }}
+          >
             View, moderate, and manage all polls on the platform
           </p>
         </a>
 
         <a
           href="/admin/users"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+          className="card"
+          style={{
+            padding: '32px',
+            background: '#FFFFFF',
+            textDecoration: 'none',
+            display: 'block',
+            cursor: 'pointer'
+          }}
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Users</h3>
-          <p className="text-gray-600 text-sm">
+          <div 
+            style={{
+              width: '48px',
+              height: '48px',
+              background: 'var(--color-success)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FFFFFF',
+              marginBottom: '16px'
+            }}
+          >
+            <Users size={24} />
+          </div>
+          <h3 
+            style={{
+              fontSize: '18px',
+              fontWeight: 700,
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-black)',
+              marginBottom: '8px'
+            }}
+          >
+            Manage Users
+          </h3>
+          <p 
+            style={{
+              fontSize: '14px',
+              color: 'var(--color-mid-gray)',
+              lineHeight: '1.6'
+            }}
+          >
             View user accounts, manage roles, and handle suspensions
           </p>
         </a>
 
         <a
           href="/admin/analytics"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
+          className="card"
+          style={{
+            padding: '32px',
+            background: '#FFFFFF',
+            textDecoration: 'none',
+            display: 'block',
+            cursor: 'pointer'
+          }}
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">View Analytics</h3>
-          <p className="text-gray-600 text-sm">
+          <div 
+            style={{
+              width: '48px',
+              height: '48px',
+              background: 'var(--color-accent)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FFFFFF',
+              marginBottom: '16px'
+            }}
+          >
+            <BarChart3 size={24} />
+          </div>
+          <h3 
+            style={{
+              fontSize: '18px',
+              fontWeight: 700,
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-black)',
+              marginBottom: '8px'
+            }}
+          >
+            View Analytics
+          </h3>
+          <p 
+            style={{
+              fontSize: '14px',
+              color: 'var(--color-mid-gray)',
+              lineHeight: '1.6'
+            }}
+          >
             Access platform-wide analytics and performance metrics
           </p>
         </a>

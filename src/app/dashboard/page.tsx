@@ -11,7 +11,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (status === 'loading') return // Still loading
+    if (status === 'loading') return
 
     if (status === 'unauthenticated') {
       router.push('/auth/login?redirect=/dashboard')
@@ -23,10 +23,28 @@ export default function DashboardPage() {
 
   if (loading || status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading dashboard...</p>
+      <div 
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#F8F9FA'
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div 
+            style={{
+              width: '48px',
+              height: '48px',
+              border: '3px solid var(--color-light-gray)',
+              borderTop: '3px solid var(--color-primary)',
+              borderRadius: '50%',
+              margin: '0 auto 16px',
+              animation: 'spin 1s linear infinite'
+            }}
+          />
+          <p style={{ color: 'var(--color-mid-gray)', fontSize: '14px' }}>Loading dashboard...</p>
         </div>
       </div>
     )
@@ -34,13 +52,48 @@ export default function DashboardPage() {
 
   if (!session?.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-4">You need to be logged in to access the dashboard.</p>
+      <div 
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#F8F9FA'
+        }}
+      >
+        <div 
+          style={{
+            textAlign: 'center',
+            background: '#FFFFFF',
+            borderRadius: 'var(--radius-lg)',
+            padding: '48px 32px',
+            boxShadow: 'var(--shadow-lg)'
+          }}
+        >
+          <h1 
+            style={{
+              fontSize: '24px',
+              fontWeight: 700,
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-black)',
+              marginBottom: '12px'
+            }}
+          >
+            Access Denied
+          </h1>
+          <p 
+            style={{
+              fontSize: '14px',
+              color: 'var(--color-mid-gray)',
+              marginBottom: '24px'
+            }}
+          >
+            You need to be logged in to access the dashboard.
+          </p>
           <button
             onClick={() => router.push('/auth/login')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="btn btn-primary"
+            style={{ padding: '12px 32px' }}
           >
             Login
           </button>
@@ -50,13 +103,28 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div style={{ minHeight: '100vh', background: '#F8F9FA' }}>
+      <div className="container mx-auto" style={{ padding: '32px 16px' }}>
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-2">
-            Welcome back, {session.user.name || session.user.email}
+        <div style={{ marginBottom: '32px' }}>
+          <h1 
+            style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-black)',
+              marginBottom: '8px'
+            }}
+          >
+            Dashboard
+          </h1>
+          <p 
+            style={{
+              fontSize: '16px',
+              color: 'var(--color-mid-gray)'
+            }}
+          >
+            Welcome back, <strong style={{ color: 'var(--color-black)' }}>{session.user.name || session.user.email}</strong>
           </p>
         </div>
 

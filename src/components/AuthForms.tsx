@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { AlertCircle, CheckCircle, Mail } from 'lucide-react'
 
 export function LoginForm() {
   const router = useRouter()
@@ -26,35 +27,97 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Sign In</h2>
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <h2 
+          style={{
+            fontSize: '28px',
+            fontWeight: 700,
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-black)',
+            marginBottom: '8px'
+          }}
+        >
+          Welcome Back
+        </h2>
+        <p style={{ fontSize: '14px', color: 'var(--color-mid-gray)' }}>
+          Sign in to your ConnectNigeria account
+        </p>
+      </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {error}
+        <div 
+          style={{
+            marginBottom: '16px',
+            padding: '12px 16px',
+            background: '#fff5f5',
+            border: '1px solid #DC3545',
+            borderRadius: 'var(--radius-lg)',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'start'
+          }}
+        >
+          <AlertCircle size={20} style={{ color: '#DC3545', flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ fontSize: '14px', color: '#DC3545' }}>
+            {error}
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label 
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: 'var(--color-dark-gray)',
+              marginBottom: '6px'
+            }}
+          >
+            Email Address
+          </label>
           <input
             type="email"
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="input-field"
+            style={{ width: '100%' }}
             placeholder="you@example.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <label 
+              style={{
+                fontSize: '14px',
+                fontWeight: 500,
+                color: 'var(--color-dark-gray)'
+              }}
+            >
+              Password
+            </label>
+            <Link 
+              href="/auth/forgot-password"
+              style={{
+                fontSize: '13px',
+                color: 'var(--color-primary)',
+                textDecoration: 'none',
+                fontWeight: 500
+              }}
+            >
+              Forgot?
+            </Link>
+          </div>
           <input
             type="password"
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="input-field"
+            style={{ width: '100%' }}
             placeholder="••••••••"
           />
         </div>
@@ -62,24 +125,42 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="btn btn-primary"
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            fontSize: '16px',
+            fontWeight: 600,
+            marginTop: '8px',
+            opacity: isLoading ? 0.6 : 1,
+            cursor: isLoading ? 'not-allowed' : 'pointer'
+          }}
         >
           {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 
-      <div className="mt-4 text-center text-sm text-gray-600 space-y-2">
-        <p>
-          <Link href="/auth/forgot-password" className="text-blue-600 hover:text-blue-700">
-            Forgot your password?
-          </Link>
-        </p>
-        <p>
-          Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium">
-            Sign Up
-          </Link>
-        </p>
+      <div 
+        style={{
+          marginTop: '24px',
+          paddingTop: '24px',
+          borderTop: '1px solid var(--color-light-gray)',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: 'var(--color-mid-gray)'
+        }}
+      >
+        Don&apos;t have an account?{' '}
+        <Link 
+          href="/auth/register"
+          style={{
+            color: 'var(--color-primary)',
+            fontWeight: 600,
+            textDecoration: 'none'
+          }}
+        >
+          Create one now
+        </Link>
       </div>
     </div>
   )
@@ -117,47 +198,112 @@ export function RegisterForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 text-center mb-6">Create Account</h2>
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <h2 
+          style={{
+            fontSize: '28px',
+            fontWeight: 700,
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-black)',
+            marginBottom: '8px'
+          }}
+        >
+          List Your Business
+        </h2>
+        <p style={{ fontSize: '14px', color: 'var(--color-mid-gray)' }}>
+          Create your ConnectNigeria account to get started
+        </p>
+      </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {error}
+        <div 
+          style={{
+            marginBottom: '16px',
+            padding: '12px 16px',
+            background: '#fff5f5',
+            border: '1px solid #DC3545',
+            borderRadius: 'var(--radius-lg)',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'start'
+          }}
+        >
+          <AlertCircle size={20} style={{ color: '#DC3545', flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ fontSize: '14px', color: '#DC3545' }}>
+            {error}
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label 
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: 'var(--color-dark-gray)',
+              marginBottom: '6px'
+            }}
+          >
+            Email Address
+          </label>
           <input
             type="email"
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="input-field"
+            style={{ width: '100%' }}
             placeholder="you@example.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label 
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: 'var(--color-dark-gray)',
+              marginBottom: '6px'
+            }}
+          >
+            Password
+          </label>
           <input
             type="password"
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="input-field"
+            style={{ width: '100%' }}
             placeholder="At least 8 characters"
           />
+          <p style={{ fontSize: '12px', color: 'var(--color-mid-gray)', marginTop: '4px' }}>
+            Use a combination of letters, numbers, and symbols
+          </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+          <label 
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: 'var(--color-dark-gray)',
+              marginBottom: '6px'
+            }}
+          >
+            Confirm Password
+          </label>
           <input
             type="password"
             required
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="input-field"
+            style={{ width: '100%' }}
             placeholder="••••••••"
           />
         </div>
@@ -165,18 +311,43 @@ export function RegisterForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="btn btn-primary"
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            fontSize: '16px',
+            fontWeight: 600,
+            marginTop: '8px',
+            opacity: isLoading ? 0.6 : 1,
+            cursor: isLoading ? 'not-allowed' : 'pointer'
+          }}
         >
           {isLoading ? 'Creating account...' : 'Create Account'}
         </button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-gray-600">
+      <div 
+        style={{
+          marginTop: '24px',
+          paddingTop: '24px',
+          borderTop: '1px solid var(--color-light-gray)',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: 'var(--color-mid-gray)'
+        }}
+      >
         Already have an account?{' '}
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
-          Sign In
+        <Link 
+          href="/auth/login"
+          style={{
+            color: 'var(--color-primary)',
+            fontWeight: 600,
+            textDecoration: 'none'
+          }}
+        >
+          Sign in here
         </Link>
-      </p>
+      </div>
     </div>
   )
 }
@@ -215,17 +386,52 @@ export function ForgotPasswordForm() {
   if (submitted) {
     return (
       <div className="w-full max-w-md mx-auto text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
+        <div 
+          style={{
+            width: '64px',
+            height: '64px',
+            background: '#e6f4ea',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 24px',
+            color: 'var(--color-primary)'
+          }}
+        >
+          <Mail size={32} />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h2>
-        <p className="text-gray-600 mb-6">
-          If an account exists for <strong>{email}</strong>, we&apos;ve sent password reset instructions.
+        <h2 
+          style={{
+            fontSize: '24px',
+            fontWeight: 700,
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-black)',
+            marginBottom: '12px'
+          }}
+        >
+          Check Your Email
+        </h2>
+        <p 
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-mid-gray)',
+            marginBottom: '24px',
+            lineHeight: '1.6'
+          }}
+        >
+          If an account exists for <strong style={{ color: 'var(--color-black)' }}>{email}</strong>, we&apos;ve sent password reset instructions.
         </p>
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-          Back to Sign In
+        <Link 
+          href="/auth/login"
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-primary)',
+            fontWeight: 600,
+            textDecoration: 'none'
+          }}
+        >
+          ← Back to Sign In
         </Link>
       </div>
     )
@@ -233,26 +439,69 @@ export function ForgotPasswordForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Forgot Password</h2>
-      <p className="text-gray-600 text-center mb-6 text-sm">
-        Enter your email and we&apos;ll send you reset instructions.
-      </p>
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h2 
+          style={{
+            fontSize: '28px',
+            fontWeight: 700,
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-black)',
+            marginBottom: '8px'
+          }}
+        >
+          Forgot Password?
+        </h2>
+        <p 
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-mid-gray)',
+            lineHeight: '1.5'
+          }}
+        >
+          Enter your email and we&apos;ll send you reset instructions.
+        </p>
+      </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {error}
+        <div 
+          style={{
+            marginBottom: '16px',
+            padding: '12px 16px',
+            background: '#fff5f5',
+            border: '1px solid #DC3545',
+            borderRadius: 'var(--radius-lg)',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'start'
+          }}
+        >
+          <AlertCircle size={20} style={{ color: '#DC3545', flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ fontSize: '14px', color: '#DC3545' }}>
+            {error}
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label 
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: 'var(--color-dark-gray)',
+              marginBottom: '6px'
+            }}
+          >
+            Email Address
+          </label>
           <input
             type="email"
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="input-field"
+            style={{ width: '100%' }}
             placeholder="you@example.com"
           />
         </div>
@@ -260,15 +509,40 @@ export function ForgotPasswordForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="btn btn-primary"
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            fontSize: '16px',
+            fontWeight: 600,
+            marginTop: '8px',
+            opacity: loading ? 0.6 : 1,
+            cursor: loading ? 'not-allowed' : 'pointer'
+          }}
         >
           {loading ? 'Sending...' : 'Send Reset Link'}
         </button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-gray-600">
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700">
-          Back to Sign In
+      <p 
+        style={{
+          marginTop: '24px',
+          paddingTop: '24px',
+          borderTop: '1px solid var(--color-light-gray)',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: 'var(--color-mid-gray)'
+        }}
+      >
+        <Link 
+          href="/auth/login"
+          style={{
+            color: 'var(--color-primary)',
+            fontWeight: 600,
+            textDecoration: 'none'
+          }}
+        >
+          ← Back to Sign In
         </Link>
       </p>
     </div>

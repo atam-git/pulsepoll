@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { Search, FileText } from 'lucide-react'
 
 interface Poll {
   _id: string
@@ -52,7 +53,7 @@ export default function DirectoryPage() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-NG', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -60,40 +61,79 @@ export default function DirectoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div style={{ minHeight: '100vh', background: '#F8F9FA', padding: '32px 16px' }}>
+      <div className="container mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Poll Directory</h1>
-          <p className="text-gray-600">Discover and participate in public polls</p>
+        <div style={{ marginBottom: '32px' }}>
+          <h1 
+            style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-black)',
+              marginBottom: '8px'
+            }}
+          >
+            Article & Poll Directory
+          </h1>
+          <p style={{ fontSize: '16px', color: 'var(--color-mid-gray)' }}>
+            Discover and participate in public articles and polls
+          </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Search polls..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+        <div 
+          className="card"
+          style={{ padding: '24px', marginBottom: '32px', background: '#FFFFFF' }}
+        >
+          <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <input
+                  type="text"
+                  placeholder="Search articles and polls..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%', paddingLeft: '36px' }}
+                />
+                <Search 
+                  size={18}
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'var(--color-mid-gray)'
+                  }}
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ padding: '12px 28px' }}
+              >
+                Search
+              </button>
             </div>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Search
-            </button>
           </form>
 
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">Sort by:</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <label 
+              style={{
+                fontSize: '14px',
+                fontWeight: 500,
+                color: 'var(--color-dark-gray)',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Sort by:
+            </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="input-field"
+              style={{ padding: '12px 20px' }}
             >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -105,19 +145,45 @@ export default function DirectoryPage() {
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading polls...</p>
+          <div style={{ textAlign: 'center', padding: '48px 16px' }}>
+            <div 
+              style={{
+                width: '48px',
+                height: '48px',
+                border: '3px solid var(--color-light-gray)',
+                borderTop: '3px solid var(--color-primary)',
+                borderRadius: '50%',
+                margin: '0 auto 16px',
+                animation: 'spin 1s linear infinite'
+              }}
+            />
+            <p style={{ color: 'var(--color-mid-gray)' }}>Loading articles and polls...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
-            <p className="text-red-700">{error}</p>
+          <div 
+            style={{
+              background: 'rgba(220, 53, 69, 0.1)',
+              border: '1px solid #DC3545',
+              borderRadius: 'var(--radius-lg)',
+              padding: '16px',
+              marginBottom: '32px',
+              color: '#DC3545'
+            }}
+          >
+            <p style={{ marginBottom: '12px' }}>{error}</p>
             <button
               onClick={fetchPolls}
-              className="mt-2 text-red-600 hover:text-red-700 font-medium"
+              style={{
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#DC3545',
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none'
+              }}
             >
               Try again
             </button>
@@ -128,52 +194,129 @@ export default function DirectoryPage() {
         {!loading && !error && (
           <>
             {polls.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No polls found</h3>
-                <p className="text-gray-600 mb-4">
+              <div 
+                className="card"
+                style={{
+                  padding: '48px 32px',
+                  textAlign: 'center',
+                  background: '#FFFFFF'
+                }}
+              >
+                <FileText 
+                  size={64}
+                  style={{
+                    color: 'var(--color-light-gray)',
+                    margin: '0 auto 16px'
+                  }}
+                />
+                <h3 
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 600,
+                    color: 'var(--color-black)',
+                    marginBottom: '8px'
+                  }}
+                >
+                  No articles or polls found
+                </h3>
+                <p 
+                  style={{
+                    fontSize: '14px',
+                    color: 'var(--color-mid-gray)',
+                    marginBottom: '24px'
+                  }}
+                >
                   {searchTerm ? 'Try adjusting your search terms.' : 'Be the first to create a public poll!'}
                 </p>
-                <Link
-                  href="/poll/create"
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
+                <Link href="/poll/create" className="btn btn-primary">
                   Create Poll
                 </Link>
               </div>
             ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div 
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '24px'
+                }}
+              >
                 {polls.map((poll) => (
-                  <div key={poll._id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                  <div 
+                    key={poll._id}
+                    className="card"
+                    style={{
+                      padding: '24px',
+                      background: '#FFFFFF',
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}
+                  >
+                    <div style={{ flex: 1, marginBottom: '16px' }}>
+                      <h3 
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: 600,
+                          color: 'var(--color-black)',
+                          marginBottom: '12px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical'
+                        }}
+                      >
                         {poll.title}
                       </h3>
                       {poll.description && (
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-3">
+                        <p 
+                          style={{
+                            fontSize: '14px',
+                            color: 'var(--color-mid-gray)',
+                            lineHeight: '1.6',
+                            marginBottom: '12px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical'
+                          }}
+                        >
                           {poll.description}
                         </p>
                       )}
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span className="capitalize">{poll.type} poll</span>
+                      <div 
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          fontSize: '13px',
+                          color: 'var(--color-mid-gray)',
+                          paddingTop: '12px',
+                          borderTop: '1px solid var(--color-light-gray)'
+                        }}
+                      >
+                        <span style={{ textTransform: 'capitalize' }}>{poll.type} poll</span>
                         <span>{poll.totalVotes} votes</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-500">
-                        <p>By {poll.creator.name || poll.creator.email}</p>
+                    <div 
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <div style={{ fontSize: '12px', color: 'var(--color-mid-gray)' }}>
+                        <p style={{ marginBottom: '2px' }}>By {poll.creator.name || poll.creator.email}</p>
                         <p>{formatDate(poll.createdAt)}</p>
                       </div>
                       <Link
                         href={`/poll/${poll._id}`}
-                        className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                        className="btn btn-primary"
+                        style={{ padding: '8px 16px', fontSize: '13px' }}
                       >
-                        View Poll
+                        View
                       </Link>
                     </div>
                   </div>
