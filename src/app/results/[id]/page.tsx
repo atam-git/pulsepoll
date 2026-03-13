@@ -98,10 +98,6 @@ export default function ResultsPage() {
             <span className={styles.statValue}>{totalVotes}</span>
             <span className={styles.statLabel}>Total Votes</span>
           </div>
-          <div className={styles.statItem}>
-            <span className={styles.statValue}>{poll.metadata.uniqueVoters || 0}</span>
-            <span className={styles.statLabel}>Voters</span>
-          </div>
         </div>
 
         <div className={styles.resultsGrid}>

@@ -11,8 +11,8 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
 
-  // Hide navigation on vote pages
-  if (pathname?.startsWith('/vote/')) {
+  // Hide navigation on vote and results pages
+  if (pathname?.startsWith('/vote/') || pathname?.startsWith('/results/')) {
     return null
   }
 

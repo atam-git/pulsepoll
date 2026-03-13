@@ -181,7 +181,7 @@ export function PollVotingInterface({
             onClick={onViewResults}
             className={styles.resultBtn}
           >
-            View Results
+            Results
           </button>
         )}
       </div>

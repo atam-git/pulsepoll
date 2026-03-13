@@ -155,7 +155,7 @@ export default function VotePage() {
           <h2>Thank You!</h2>
           <p>Your vote has been recorded successfully.</p>
           <button onClick={handleViewResults} className={styles.viewResultsBtn}>
-            View Results
+            Results
           </button>
         </div>
       </div>
