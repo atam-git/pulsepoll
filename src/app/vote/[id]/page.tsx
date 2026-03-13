@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { PollVotingInterface } from '@/components/PollVotingInterface'
 import styles from './vote.module.css'
 
@@ -26,7 +26,6 @@ interface Poll {
 
 export default function VotePage() {
   const params = useParams()
-  const router = useRouter()
   const pollId = params.id as string
 
   const [poll, setPoll] = useState<Poll | null>(null)
@@ -39,12 +38,36 @@ export default function VotePage() {
 
     const fetchPoll = async () => {
       try {
-        const response = await fetch(`/api/polls/${pollId}`)
-        if (!response.ok) throw new Error('Failed to fetch poll')
+        console.log('Fetching poll:', pollId)
+        const response = await fetch(`/api/polls/${pollId}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        })
+        
+        console.log('Response status:', response.status)
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()))
+        
+        if (!response.ok) {
+          const text = await response.text()
+          console.error('Error response:', text)
+          throw new Error(`Failed to fetch poll (${response.status})`)
+        }
+        
+        const contentType = response.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text()
+          console.error('Non-JSON response:', text.substring(0, 200))
+          throw new Error('Server returned invalid response')
+        }
+        
         const data = await response.json()
+        console.log('Poll data:', data)
         setPoll(data.poll)
         setLoading(false)
       } catch (err) {
+        console.error('Poll fetch error:', err)
         setError(err instanceof Error ? err.message : 'Failed to load poll')
         setLoading(false)
       }
@@ -54,7 +77,6 @@ export default function VotePage() {
   }, [pollId])
 
   const handleVoteSuccess = () => setHasVoted(true)
-  const handleViewResults = () => router.push(`/poll/${pollId}`)
 
   if (loading) {
     return (
@@ -71,6 +93,14 @@ export default function VotePage() {
         <div className={styles.errorCard}>
           <h1>Poll Not Found</h1>
           <p>{error || 'This poll does not exist or is no longer available.'}</p>
+          <details style={{ marginTop: '20px', textAlign: 'left', fontSize: '12px', color: '#666' }}>
+            <summary style={{ cursor: 'pointer', marginBottom: '10px' }}>Technical Details</summary>
+            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              Poll ID: {pollId}
+              {'\n'}Error: {error}
+              {'\n'}URL: {typeof window !== 'undefined' ? window.location.href : 'N/A'}
+            </pre>
+          </details>
         </div>
       </div>
     )
@@ -87,9 +117,6 @@ export default function VotePage() {
           </div>
           <h2>Thank You!</h2>
           <p>Your vote has been recorded successfully.</p>
-          <button onClick={handleViewResults} className={styles.viewResultsBtn}>
-            View Results
-          </button>
         </div>
       </div>
     )
@@ -116,7 +143,6 @@ export default function VotePage() {
           pollType={poll.type as 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'}
           options={poll.options}
           onVoteSuccess={handleVoteSuccess}
-          onViewResults={handleViewResults}
         />
       </main>
     </div>

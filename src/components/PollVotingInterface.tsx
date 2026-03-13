@@ -15,7 +15,6 @@ interface PollVotingInterfaceProps {
   pollType: 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'
   options: PollOption[]
   onVoteSuccess: () => void
-  onViewResults?: () => void
 }
 
 function RadioIcon({ selected }: { selected: boolean }) {
@@ -63,7 +62,6 @@ export function PollVotingInterface({
   pollType,
   options,
   onVoteSuccess,
-  onViewResults,
 }: PollVotingInterfaceProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -160,16 +158,6 @@ export function PollVotingInterface({
         >
           {submitting ? 'Submitting...' : 'Vote'}
         </button>
-
-        {onViewResults && (
-          <button
-            onClick={onViewResults}
-            disabled={submitting}
-            className={styles.resultBtn}
-          >
-            Result
-          </button>
-        )}
       </div>
     </div>
   )
