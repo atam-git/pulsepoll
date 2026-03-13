@@ -1,10 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { withOptionalAuth, withUserAuth, AuthenticatedRequest } from '@/middleware/auth'
 import Poll from '@/models/Poll'
 import Vote from '@/models/Vote'
-import User from '@/models/User' // Import User model to ensure it's registered
 import connectDB from '@/lib/mongodb'
 import { RealTimeHelper } from '@/services/realtime'
+
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 interface RouteParams {
   params: Promise<{ id: string }>
