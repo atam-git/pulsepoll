@@ -91,7 +91,7 @@ export function PollCreationWizard() {
     const newErrors: FormErrors = {}
 
     if (s === 0) {
-      if (!formData.title.trim()) newErrors.title = 'Title is required'
+      // Title is now optional - no validation needed
       if (!formData.type) newErrors.type = 'Select a poll type'
     }
 
@@ -247,12 +247,12 @@ export function PollCreationWizard() {
                   ? 'bg-blue-600 text-white'
                   : i < step
                   ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                  : 'bg-gray-200 text-gray-500'
+                  : 'bg-gray-200 text-gray-600'
               }`}
             >
               {i + 1}
             </button>
-            <span className={`ml-2 text-sm hidden sm:inline ${i === step ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+            <span className={`ml-2 text-sm hidden sm:inline ${i === step ? 'text-blue-600 font-medium' : 'text-gray-700'}`}>
               {label}
             </span>
             {i < STEPS.length - 1 && (
@@ -269,13 +269,13 @@ export function PollCreationWizard() {
             <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Poll Title</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Poll Title (optional)</label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="What would you like to ask?"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="What would you like to ask? (optional)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
               />
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
             </div>
@@ -287,7 +287,7 @@ export function PollCreationWizard() {
                 onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Add more context to your poll"
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
               />
             </div>
 
@@ -310,7 +310,7 @@ export function PollCreationWizard() {
                       <Icon className="w-6 h-6 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
                       <div>
                         <div className="font-medium text-gray-900">{pt.label}</div>
-                        <div className="text-sm text-gray-500">{pt.description}</div>
+                        <div className="text-sm text-gray-600">{pt.description}</div>
                       </div>
                     </button>
                   )
@@ -339,18 +339,18 @@ export function PollCreationWizard() {
                   {formData.options.map((option, index) => (
                     <div key={option.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="text-sm text-gray-400 w-6 text-center">{index + 1}.</span>
+                        <span className="text-sm text-gray-600 w-6 text-center">{index + 1}.</span>
                         <input
                           type="text"
                           value={option.text}
                           onChange={e => updateOption(option.id, e.target.value)}
                           placeholder={`Option ${index + 1} (optional if image added)`}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                         />
                         <button
                           onClick={() => removeOption(option.id)}
                           disabled={formData.options.length <= 2}
-                          className="p-2 text-gray-400 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-2 text-gray-600 hover:text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <TrashIcon className="w-5 h-5" />
                         </button>
@@ -396,7 +396,7 @@ export function PollCreationWizard() {
                               <PhotoIcon className="w-4 h-4" />
                               {option.uploading ? 'Uploading...' : 'Add Image'}
                             </label>
-                            <span className="text-xs text-gray-500">Optional</span>
+                            <span className="text-xs text-gray-600">Optional</span>
                           </div>
                         )}
                       </div>
@@ -426,7 +426,7 @@ export function PollCreationWizard() {
               <select
                 value={formData.settings.privacy}
                 onChange={e => setFormData(prev => ({ ...prev, settings: { ...prev.settings, privacy: e.target.value as PollSettings['privacy'] } }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               >
                 <option value="public">Public - Anyone can find and vote</option>
                 <option value="unlisted">Unlisted - Only people with the link can vote</option>
@@ -440,7 +440,7 @@ export function PollCreationWizard() {
                 type="datetime-local"
                 value={formData.settings.expirationDate}
                 onChange={e => setFormData(prev => ({ ...prev, settings: { ...prev.settings, expirationDate: e.target.value } }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
               />
             </div>
 
@@ -452,14 +452,14 @@ export function PollCreationWizard() {
                 value={formData.settings.maxVotes}
                 onChange={e => setFormData(prev => ({ ...prev, settings: { ...prev.settings, maxVotes: e.target.value ? parseInt(e.target.value) : '' } }))}
                 placeholder="Unlimited"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
               />
             </div>
 
             <div className="flex items-center justify-between py-2">
               <div>
                 <div className="text-sm font-medium text-gray-700">Allow Anonymous Voting</div>
-                <div className="text-sm text-gray-500">Voters don't need to sign in</div>
+                <div className="text-sm text-gray-600">Voters don't need to sign in</div>
               </div>
               <button
                 onClick={() => setFormData(prev => ({ ...prev, settings: { ...prev.settings, allowAnonymous: !prev.settings.allowAnonymous } }))}
@@ -476,7 +476,7 @@ export function PollCreationWizard() {
             <div className="flex items-center justify-between py-2">
               <div>
                 <div className="text-sm font-medium text-gray-700">Require CAPTCHA</div>
-                <div className="text-sm text-gray-500">Prevent automated voting</div>
+                <div className="text-sm text-gray-600">Prevent automated voting</div>
               </div>
               <button
                 onClick={() => setFormData(prev => ({ ...prev, settings: { ...prev.settings, requireCaptcha: !prev.settings.requireCaptcha } }))}
@@ -499,24 +499,24 @@ export function PollCreationWizard() {
 
             <div className="space-y-4">
               <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-1">Title</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-1">Title</h3>
                 <p className="text-gray-900 font-medium">{formData.title}</p>
               </div>
 
               {formData.description && (
                 <div className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-sm font-medium text-gray-500 mb-1">Description</h3>
+                  <h3 className="text-sm font-medium text-gray-700 mb-1">Description</h3>
                   <p className="text-gray-900">{formData.description}</p>
                 </div>
               )}
 
               <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-1">Poll Type</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-1">Poll Type</h3>
                 <p className="text-gray-900">{POLL_TYPES.find(p => p.value === formData.type)?.label}</p>
               </div>
 
               <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Options</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Options</h3>
                 <div className="space-y-3">
                   {formData.type === 'yesno' ? (
                     <>
@@ -548,7 +548,7 @@ export function PollCreationWizard() {
               </div>
 
               <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Settings</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Settings</h3>
                 <div className="text-sm text-gray-700 space-y-1">
                   <p>Privacy: {formData.settings.privacy}</p>
                   <p>Expiration: {formData.settings.expirationDate || 'None'}</p>

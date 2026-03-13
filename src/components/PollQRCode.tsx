@@ -105,7 +105,7 @@ export function PollQRCode({ pollId, pollTitle, size = 200, className = '', cust
       {/* Poll URL Display */}
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-2">Scan to access poll:</p>
-        <p className="text-xs text-gray-500 break-all font-mono bg-gray-50 p-2 rounded">
+        <p className="text-xs text-gray-600 break-all font-mono bg-gray-50 p-2 rounded">
           {pollUrl}
         </p>
       </div>

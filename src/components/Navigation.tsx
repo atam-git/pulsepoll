@@ -2,25 +2,38 @@
 
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
+import { useState } from 'react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function Navigation() {
   const { data: session, status } = useSession()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false)
+  }
 
   return (
     <nav className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-2xl font-bold text-blue-600">
+          {/* Logo */}
+          <Link href="/" className="text-xl sm:text-2xl font-bold text-blue-600" onClick={closeMobileMenu}>
             PulsePoll
           </Link>
           
-          <div className="flex items-center space-x-6">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
             <Link href="/directory" className="text-gray-600 hover:text-gray-900 transition-colors">
               Browse Polls
             </Link>
             
             {status === 'loading' ? (
-              <div className="text-gray-500">Loading...</div>
+              <div className="text-gray-600">Loading...</div>
             ) : session ? (
               <div className="flex items-center space-x-4">
                 <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 transition-colors">
@@ -47,7 +60,84 @@ export default function Navigation() {
               </div>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200 py-4">
+            <div className="flex flex-col space-y-4">
+              <Link 
+                href="/directory" 
+                className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
+                onClick={closeMobileMenu}
+              >
+                Browse Polls
+              </Link>
+              
+              {status === 'loading' ? (
+                <div className="text-gray-600 px-2 py-1">Loading...</div>
+              ) : session ? (
+                <>
+                  <Link 
+                    href="/dashboard" 
+                    className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
+                    onClick={closeMobileMenu}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link 
+                    href="/poll/create" 
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-center mx-2"
+                    onClick={closeMobileMenu}
+                  >
+                    Create Poll
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut()
+                      closeMobileMenu()
+                    }}
+                    className="text-gray-600 hover:text-gray-900 transition-colors text-left px-2 py-1"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    href="/auth/login" 
+                    className="text-gray-600 hover:text-gray-900 transition-colors px-2 py-1"
+                    onClick={closeMobileMenu}
+                  >
+                    Sign In
+                  </Link>
+                  <Link 
+                    href="/auth/register" 
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors text-center mx-2"
+                    onClick={closeMobileMenu}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )

@@ -22,9 +22,9 @@ async function createPoll(req: AuthenticatedRequest) {
     } = body
 
     // Validate required fields
-    if (!title || !type || !options) {
+    if (!type || !options) {
       return NextResponse.json(
-        { error: 'Title, type, and options are required' },
+        { error: 'Type and options are required' },
         { status: 400 }
       )
     }
@@ -71,8 +71,8 @@ async function createPoll(req: AuthenticatedRequest) {
       }
     }
 
-    // Validate title length
-    if (title.length > 200) {
+    // Validate title length (if provided)
+    if (title && title.length > 200) {
       return NextResponse.json(
         { error: 'Title cannot exceed 200 characters' },
         { status: 400 }
@@ -102,7 +102,7 @@ async function createPoll(req: AuthenticatedRequest) {
 
     // Create poll data
     const pollData = {
-      title: title.trim(),
+      title: title?.trim() || '',
       description: description?.trim() || '',
       type,
       options: options.map((option: any, index: number) => ({

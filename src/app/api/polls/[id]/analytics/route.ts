@@ -18,9 +18,17 @@ async function getPollAnalytics(req: AuthenticatedRequest, { params }: RoutePara
     const { searchParams } = new URL(req.url)
     const format = searchParams.get('format') || 'full' // full, summary, chart
 
-    if (!pollId) {
+    if (!pollId || pollId === 'undefined' || pollId === 'null') {
       return NextResponse.json(
         { error: 'Poll ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate ObjectId format
+    if (!/^[0-9a-fA-F]{24}$/.test(pollId)) {
+      return NextResponse.json(
+        { error: 'Invalid poll ID format' },
         { status: 400 }
       )
     }

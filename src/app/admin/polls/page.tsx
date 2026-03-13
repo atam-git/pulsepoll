@@ -464,7 +464,7 @@ export default function AdminPollsPage() {
                           href={`/poll/${poll.id}`}
                           className="text-blue-600 hover:text-blue-800 font-medium"
                         >
-                          {poll.title}
+                          {poll.title || 'Untitled Poll'}
                         </Link>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">

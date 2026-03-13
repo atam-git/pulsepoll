@@ -131,7 +131,7 @@ export default function AdminAnalyticsPage() {
               <span className="text-2xl">👥</span>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
+              <p className="text-sm font-medium text-gray-700">Total Users</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {analytics?.platformStats.totalUsers || 0}
               </p>
@@ -145,7 +145,7 @@ export default function AdminAnalyticsPage() {
               <span className="text-2xl">📋</span>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Polls</p>
+              <p className="text-sm font-medium text-gray-700">Total Polls</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {analytics?.platformStats.totalPolls || 0}
               </p>
@@ -159,7 +159,7 @@ export default function AdminAnalyticsPage() {
               <span className="text-2xl">✅</span>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Votes</p>
+              <p className="text-sm font-medium text-gray-700">Total Votes</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {analytics?.platformStats.totalVotes || 0}
               </p>
@@ -173,7 +173,7 @@ export default function AdminAnalyticsPage() {
               <span className="text-2xl">🔥</span>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Polls</p>
+              <p className="text-sm font-medium text-gray-700">Active Polls</p>
               <p className="text-2xl font-semibold text-gray-900">
                 {analytics?.platformStats.activePolls || 0}
               </p>
@@ -188,35 +188,35 @@ export default function AdminAnalyticsPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">System Performance (Last 24 Hours)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center">
-              <p className="text-sm text-gray-600">Avg Response Time</p>
+              <p className="text-sm text-gray-700">Avg Response Time</p>
               <p className="text-2xl font-bold text-blue-600">
                 {analytics.systemMetrics.responseTime.avg.toFixed(0)}ms
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600">
                 P95: {analytics.systemMetrics.responseTime.p95.toFixed(0)}ms
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-600">Error Rate</p>
+              <p className="text-sm text-gray-700">Error Rate</p>
               <p className="text-2xl font-bold text-red-600">
                 {analytics.systemMetrics.errorRate.avg.toFixed(2)}%
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600">
                 {analytics.systemMetrics.errorRate.total} total errors
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-600">Total Requests</p>
+              <p className="text-sm text-gray-700">Total Requests</p>
               <p className="text-2xl font-bold text-green-600">
                 {analytics.systemMetrics.requestCount.total.toLocaleString()}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-600">Avg Query Time</p>
+              <p className="text-sm text-gray-700">Avg Query Time</p>
               <p className="text-2xl font-bold text-purple-600">
                 {analytics.systemMetrics.databaseStats.avgQueryTime.toFixed(0)}ms
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600">
                 Pool: {analytics.systemMetrics.databaseStats.avgConnectionPoolSize.toFixed(0)}
               </p>
             </div>
@@ -229,19 +229,19 @@ export default function AdminAnalyticsPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">This Week's Growth</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <p className="text-sm text-gray-600">New Users</p>
+            <p className="text-sm text-gray-700">New Users</p>
             <p className="text-3xl font-bold text-blue-600">
               {analytics?.growthMetrics.usersThisWeek || 0}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">New Polls</p>
+            <p className="text-sm text-gray-700">New Polls</p>
             <p className="text-3xl font-bold text-green-600">
               {analytics?.growthMetrics.pollsThisWeek || 0}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">New Votes</p>
+            <p className="text-sm text-gray-700">New Votes</p>
             <p className="text-3xl font-bold text-purple-600">
               {analytics?.growthMetrics.votesThisWeek || 0}
             </p>
@@ -261,14 +261,14 @@ export default function AdminAnalyticsPage() {
                 {analytics.topPolls.map((poll, index) => (
                   <div key={poll.id} className="flex items-center justify-between">
                     <div className="flex items-center flex-1">
-                      <span className="text-lg font-bold text-gray-400 w-8">
+                      <span className="text-lg font-bold text-gray-600 w-8">
                         #{index + 1}
                       </span>
                       <div className="ml-3 flex-1">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          {poll.title}
+                          {poll.title || 'Untitled Poll'}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-600">
                           {poll.uniqueVoters} unique voters
                         </p>
                       </div>
@@ -277,13 +277,13 @@ export default function AdminAnalyticsPage() {
                       <span className="text-lg font-bold text-blue-600">
                         {poll.totalVotes}
                       </span>
-                      <span className="text-xs text-gray-500 ml-1">votes</span>
+                      <span className="text-xs text-gray-600 ml-1">votes</span>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-8">No poll data available</p>
+              <p className="text-gray-600 text-center py-8">No poll data available</p>
             )}
           </div>
         </div>
@@ -325,7 +325,7 @@ export default function AdminAnalyticsPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-8">No poll type data available</p>
+              <p className="text-gray-600 text-center py-8">No poll type data available</p>
             )}
           </div>
         </div>
@@ -352,7 +352,7 @@ export default function AdminAnalyticsPage() {
                           {stat.total} total
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <div className="flex justify-between text-xs text-gray-600 mb-1">
                         <span>Success: {stat.success}</span>
                         <span>Failed: {stat.failure}</span>
                         <span>Rate: {stat.successRate.toFixed(1)}%</span>
@@ -367,7 +367,7 @@ export default function AdminAnalyticsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">No audit statistics available</p>
+                <p className="text-gray-600 text-center py-8">No audit statistics available</p>
               )}
             </div>
           </div>
@@ -397,7 +397,7 @@ export default function AdminAnalyticsPage() {
                             {log.action}
                           </span>
                         </div>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-600">
                           {new Date(log.createdAt).toLocaleString()}
                         </span>
                       </div>
@@ -419,7 +419,7 @@ export default function AdminAnalyticsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">No audit logs available</p>
+                <p className="text-gray-600 text-center py-8">No audit logs available</p>
               )}
             </div>
           </div>

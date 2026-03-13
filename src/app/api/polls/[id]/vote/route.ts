@@ -26,9 +26,17 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
       sessionId 
     } = body
 
-    if (!pollId) {
+    if (!pollId || pollId === 'undefined' || pollId === 'null') {
       return NextResponse.json(
         { error: 'Poll ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate ObjectId format
+    if (!/^[0-9a-fA-F]{24}$/.test(pollId)) {
+      return NextResponse.json(
+        { error: 'Invalid poll ID format' },
         { status: 400 }
       )
     }
@@ -52,7 +60,7 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
     }
 
     // Check if poll is active and not expired
-    if (poll.metadata.status !== 'active') {
+    if (poll.status !== 'active') {
       return NextResponse.json(
         { error: 'Poll is not active' },
         { status: 400 }
@@ -94,7 +102,11 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
       sessionId: sessionId || null,
       fingerprint: voterInfo.fingerprint || null,
       userAgent: req.headers.get('user-agent') || null,
-      location: voterInfo.location || null
+      location: voterInfo.location ? {
+        country: voterInfo.location.country || 'Unknown',
+        region: voterInfo.location.region || 'Unknown', 
+        city: voterInfo.location.city || voterInfo.location
+      } : undefined
     }
 
     // Check for duplicate votes
@@ -130,7 +142,13 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
     // Create the vote record
     const voteData = {
       pollId,
-      voterInfo: voterData,
+      voterInfo: {
+        ipAddress: voterData.ipAddress,
+        userAgent: voterData.userAgent || 'Unknown',
+        fingerprint: voterData.fingerprint || 'unknown-' + Date.now(),
+        sessionId: voterData.sessionId || 'session-' + Date.now(),
+        location: voterData.location
+      },
       voteData: formatVoteData(poll.type, votes),
       referralSource: referralData.source,
       metadata: {
@@ -143,7 +161,7 @@ async function submitVote(req: AuthenticatedRequest, { params }: RouteParams) {
         // Enhanced demographic tracking
         demographics: {
           deviceType: extractDeviceType(voterData.userAgent || ''),
-          location: voterData.location,
+          location: typeof voterData.location === 'string' ? voterData.location : voterData.location?.city,
           referralSource: referralData.source,
           referralMedium: referralData.medium,
           referralUrl: referralData.url,
@@ -335,24 +353,28 @@ function formatVoteData(pollType: string, votes: any): any {
   switch (pollType) {
     case 'single':
     case 'yesno':
-      return { selectedOption: votes[0] }
+      return { selectedOptions: votes } // Keep as array for consistency
     
     case 'multiple':
       return { selectedOptions: votes }
     
     case 'ranking':
       return { 
-        rankedOptions: votes.map((optionId: string, index: number) => ({
-          optionId,
-          rank: index + 1
-        }))
+        selectedOptions: votes, // Keep the selected options
+        rankings: votes.reduce((acc: any, optionId: string, index: number) => {
+          acc[optionId] = index + 1
+          return acc
+        }, {})
       }
     
     case 'survey':
-      return { responses: votes }
+      return { 
+        selectedOptions: Object.keys(votes), // Survey question IDs
+        textResponses: votes 
+      }
     
     default:
-      return votes
+      return { selectedOptions: Array.isArray(votes) ? votes : [votes] }
   }
 }
 

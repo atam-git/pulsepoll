@@ -171,7 +171,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Polls</p>
+              <p className="text-sm font-medium text-gray-700">Total Polls</p>
               <p className="text-2xl font-bold text-gray-900">{totalPolls}</p>
             </div>
           </div>
@@ -185,7 +185,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Active Polls</p>
+              <p className="text-sm font-medium text-gray-700">Active Polls</p>
               <p className="text-2xl font-bold text-gray-900">
                 {polls.filter(p => p.status === 'active' && !isExpired(p)).length}
               </p>
@@ -201,7 +201,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Votes</p>
+              <p className="text-sm font-medium text-gray-700">Total Votes</p>
               <p className="text-2xl font-bold text-gray-900">
                 {polls.reduce((sum, poll) => sum + poll.metadata.totalVotes, 0)}
               </p>
@@ -217,7 +217,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Views</p>
+              <p className="text-sm font-medium text-gray-700">Total Views</p>
               <p className="text-2xl font-bold text-gray-900">
                 {polls.reduce((sum, poll) => sum + poll.metadata.viewCount, 0)}
               </p>
@@ -236,7 +236,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
               placeholder="Search polls..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             />
           </div>
 
@@ -245,7 +245,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
             <select
               value={filterBy}
               onChange={(e) => setFilterBy(e.target.value as FilterOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
             >
               <option value="all">All Polls</option>
               <option value="active">Active</option>
@@ -258,7 +258,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -294,7 +294,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
 
       {polls.length === 0 && !loading ? (
         <div className="bg-white rounded-lg shadow p-8 text-center">
-          <div className="text-gray-400 mb-4">
+          <div className="text-gray-600 mb-4">
             <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
@@ -326,7 +326,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                           href={`/poll/${poll.id}`}
                           className="hover:text-blue-600 transition-colors"
                         >
-                          {poll.title}
+                          {poll.title || 'Untitled Poll'}
                         </Link>
                       </h3>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(isExpired(poll) ? 'expired' : poll.status)}`}>
@@ -341,7 +341,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                       <p className="text-gray-600 mb-3 line-clamp-2">{poll.description}</p>
                     )}
                     
-                    <div className="flex items-center space-x-6 text-sm text-gray-500">
+                    <div className="flex items-center space-x-6 text-sm text-gray-600">
                       <span>📊 {poll.metadata.totalVotes} votes</span>
                       <span>👥 {poll.metadata.uniqueVoters} voters</span>
                       <span>👁️ {poll.metadata.viewCount} views</span>
@@ -360,7 +360,7 @@ export function UserPollDashboard({ userId }: UserPollDashboardProps) {
                       View
                     </Link>
                     <Link
-                      href={`/polls/${poll.id}/edit`}
+                      href={`/poll/${poll.id}`}
                       className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
                     >
                       Edit

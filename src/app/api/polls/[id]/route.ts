@@ -18,9 +18,17 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
   try {
     const { id } = await params
     
-    if (!id) {
+    if (!id || id === 'undefined' || id === 'null') {
       return NextResponse.json(
         { error: 'Poll ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate ObjectId format
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return NextResponse.json(
+        { error: 'Invalid poll ID format' },
         { status: 400 }
       )
     }
@@ -94,9 +102,17 @@ async function updatePoll(req: AuthenticatedRequest, { params }: RouteParams) {
     const { id } = await params
     const body = await req.json()
 
-    if (!id) {
+    if (!id || id === 'undefined' || id === 'null') {
       return NextResponse.json(
         { error: 'Poll ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate ObjectId format
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return NextResponse.json(
+        { error: 'Invalid poll ID format' },
         { status: 400 }
       )
     }
@@ -263,9 +279,17 @@ async function deletePoll(req: AuthenticatedRequest, { params }: RouteParams) {
   try {
     const { id } = await params
 
-    if (!id) {
+    if (!id || id === 'undefined' || id === 'null') {
       return NextResponse.json(
         { error: 'Poll ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate ObjectId format
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return NextResponse.json(
+        { error: 'Invalid poll ID format' },
         { status: 400 }
       )
     }

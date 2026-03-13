@@ -45,7 +45,7 @@ export function PollShareDialog({ pollId, pollTitle, isOpen, onClose }: PollShar
           <h2 className="text-xl font-semibold text-gray-900">Share Poll</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-600 hover:text-gray-800 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -61,7 +61,7 @@ export function PollShareDialog({ pollId, pollTitle, isOpen, onClose }: PollShar
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'qr'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
               }`}
             >
               QR Code
@@ -71,7 +71,7 @@ export function PollShareDialog({ pollId, pollTitle, isOpen, onClose }: PollShar
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'link'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
               }`}
             >
               Direct Link
@@ -81,7 +81,7 @@ export function PollShareDialog({ pollId, pollTitle, isOpen, onClose }: PollShar
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'social'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
               }`}
             >
               Social Media
@@ -91,7 +91,7 @@ export function PollShareDialog({ pollId, pollTitle, isOpen, onClose }: PollShar
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'embed'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
               }`}
             >
               Embed Widget
@@ -114,7 +114,7 @@ export function PollShareDialog({ pollId, pollTitle, isOpen, onClose }: PollShar
                 className="mx-auto"
                 customUrl={`${votingUrl}?utm_source=qr_code&utm_medium=qr&utm_campaign=poll_share`}
               />
-              <p className="text-sm text-gray-500 mt-4">
+              <p className="text-sm text-gray-600 mt-4">
                 Scans to: {votingUrl}
               </p>
             </div>

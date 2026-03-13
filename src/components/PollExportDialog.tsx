@@ -85,7 +85,7 @@ export function PollExportDialog({
           <h2 className="text-xl font-semibold">Export Poll Data</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-600 hover:text-gray-800"
           >
             ✕
           </button>
@@ -283,7 +283,7 @@ export function ExportHistory({ pollId }: ExportHistoryProps) {
 
   if (exports.length === 0) {
     return (
-      <div className="text-center text-gray-500 p-4">
+      <div className="text-center text-gray-600 p-4">
         No exports yet
       </div>
     )
@@ -295,11 +295,11 @@ export function ExportHistory({ pollId }: ExportHistoryProps) {
         <div key={exp.id} className="border rounded-lg p-4 flex justify-between items-center">
           <div>
             <div className="font-medium capitalize">{exp.format} Export</div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-600">
               Created: {new Date(exp.createdAt).toLocaleString()}
             </div>
             {exp.fileSize && (
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-600">
                 Size: {(exp.fileSize / 1024).toFixed(1)} KB
               </div>
             )}

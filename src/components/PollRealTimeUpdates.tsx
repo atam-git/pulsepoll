@@ -112,7 +112,7 @@ export function PollRealTimeUpdates({
                  'Disconnected'}
               </span>
               {connectionId && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-600">
                   ID: {connectionId.slice(-8)}
                 </span>
               )}
@@ -120,7 +120,7 @@ export function PollRealTimeUpdates({
             
             <div className="flex items-center space-x-2">
               {messageCount > 0 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-600">
                   {messageCount} messages
                 </span>
               )}

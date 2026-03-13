@@ -65,7 +65,7 @@ export function PollChart({
     return (
       <div className="flex flex-col items-center justify-center text-center p-4" style={{ height }}>
         <p className="text-red-600 mb-2">Error loading chart</p>
-        <p className="text-sm text-gray-500 mb-4">{error}</p>
+        <p className="text-sm text-gray-600 mb-4">{error}</p>
         <button
           onClick={fetchChartData}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -78,7 +78,7 @@ export function PollChart({
 
   if (!chartData || chartData.datasets[0].data.every(value => value === 0)) {
     return (
-      <div className="flex items-center justify-center text-gray-500" style={{ height }}>
+      <div className="flex items-center justify-center text-gray-600" style={{ height }}>
         <p>No data to display</p>
       </div>
     )
@@ -96,7 +96,7 @@ export function PollChart({
         <RankingChart data={chartData} height={height} showLegend={showLegend} />
       )}
       
-      <div className="mt-4 text-sm text-gray-500 text-center">
+      <div className="mt-4 text-sm text-gray-600 text-center">
         Total votes: {chartData.metadata.totalVotes} • 
         Generated: {new Date(chartData.metadata.generatedAt).toLocaleTimeString()}
       </div>
@@ -177,7 +177,7 @@ function PieChart({ data, height, showLegend }: { data: ChartData; height: numbe
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <div className="text-2xl font-bold">{total}</div>
-            <div className="text-sm text-gray-500">votes</div>
+            <div className="text-sm text-gray-600">votes</div>
           </div>
         </div>
       </div>
@@ -270,7 +270,7 @@ function RankingChart({ data, height, showLegend }: { data: ChartData; height: n
               </div>
               <div className="flex-1">
                 <div className="font-medium truncate">{label}</div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-600">
                   Avg. rank: {avgRank.toFixed(1)}
                 </div>
               </div>

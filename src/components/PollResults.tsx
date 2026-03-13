@@ -70,7 +70,7 @@ export function PollResults({ poll: initialPoll, showChart = true }: PollResults
               </div>
               <div className="flex-1">
                 <div className="font-medium text-gray-900">{option.text}</div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-700">
                   Avg. rank: {option.averageRank?.toFixed(1) ?? '—'} · {option.voteCount} votes
                 </div>
               </div>
@@ -94,7 +94,7 @@ export function PollResults({ poll: initialPoll, showChart = true }: PollResults
             <div key={option.id} className="border border-gray-200 rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
                 <span className="font-medium text-gray-900">{option.text}</span>
-                <span className="text-sm text-gray-500">{option.voteCount} votes ({pct}%)</span>
+                <span className="text-sm text-gray-700">{option.voteCount} votes ({pct}%)</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
@@ -115,10 +115,10 @@ export function PollResults({ poll: initialPoll, showChart = true }: PollResults
 function Header({ totalVotes, isConnected }: { totalVotes: number; isConnected: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <div className="text-sm text-gray-500">
-        Total votes: <span className="font-semibold text-gray-700">{totalVotes}</span>
+      <div className="text-sm text-gray-700">
+        Total votes: <span className="font-semibold text-gray-800">{totalVotes}</span>
       </div>
-      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+      <div className="flex items-center gap-1.5 text-xs text-gray-700">
         <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
         {isConnected ? 'Live' : 'Offline'}
       </div>

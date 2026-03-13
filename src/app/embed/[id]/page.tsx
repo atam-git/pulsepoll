@@ -169,12 +169,12 @@ export default function EmbedPollPage() {
         {/* Poll Header */}
         {showTitle && (
           <h1 className={`font-bold mb-2 ${compact ? 'text-lg' : 'text-2xl'}`}>
-            {poll.title}
+            {poll.title || 'Untitled Poll'}
           </h1>
         )}
         
         {showDescription && poll.description && (
-          <p className={`text-gray-600 mb-4 ${compact ? 'text-sm' : 'text-base'} ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={`text-gray-700 mb-4 ${compact ? 'text-sm' : 'text-base'} ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
             {poll.description}
           </p>
         )}
@@ -234,7 +234,7 @@ export default function EmbedPollPage() {
                 ${compact ? 'text-sm' : 'text-base'}
                 ${canVote()
                   ? 'bg-blue-500 text-white hover:bg-blue-600'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
                 }
               `}
             >
@@ -251,7 +251,7 @@ export default function EmbedPollPage() {
             </h2>
             
             {poll.metadata.totalVotes === 0 ? (
-              <p className={`text-gray-500 text-center py-4 ${compact ? 'text-sm' : 'text-base'}`}>
+              <p className={`text-gray-600 text-center py-4 ${compact ? 'text-sm' : 'text-base'}`}>
                 No votes yet
               </p>
             ) : (
@@ -269,7 +269,7 @@ export default function EmbedPollPage() {
                             <span className={`font-medium ${compact ? 'text-sm' : 'text-base'}`}>
                               {option.text}
                             </span>
-                            <span className={`text-gray-500 ${compact ? 'text-xs' : 'text-sm'}`}>
+                            <span className={`text-gray-600 ${compact ? 'text-xs' : 'text-sm'}`}>
                               {option.voteCount} ({percentage}%)
                             </span>
                           </div>
@@ -292,7 +292,7 @@ export default function EmbedPollPage() {
                           <span className={`font-medium ${compact ? 'text-sm' : 'text-base'}`}>
                             {option.text}
                           </span>
-                          <span className={`text-gray-500 ${compact ? 'text-xs' : 'text-sm'}`}>
+                          <span className={`text-gray-600 ${compact ? 'text-xs' : 'text-sm'}`}>
                             {option.voteCount} ({percentage}%)
                           </span>
                         </div>
@@ -309,14 +309,14 @@ export default function EmbedPollPage() {
               </div>
             )}
             
-            <div className={`mt-3 text-center text-gray-500 ${compact ? 'text-xs' : 'text-sm'}`}>
+            <div className={`mt-3 text-center text-gray-600 ${compact ? 'text-xs' : 'text-sm'}`}>
               {poll.metadata.totalVotes} total votes
             </div>
           </div>
         )}
 
         {/* Powered by link */}
-        <div className={`mt-6 text-center ${compact ? 'text-xs' : 'text-sm'} text-gray-400`}>
+        <div className={`mt-6 text-center ${compact ? 'text-xs' : 'text-sm'} text-gray-600`}>
           <a 
             href={`${window.location.origin}/poll/${pollId}`}
             target="_blank"

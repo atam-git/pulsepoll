@@ -96,11 +96,11 @@ export function PollVotingInterface({
                     />
                   )}
                   {option.text ? (
-                    <span className="font-medium">{option.text}</span>
+                    <span className="font-medium text-gray-900">{option.text}</span>
                   ) : option.imageUrl ? (
-                    <span className="font-medium text-gray-500 italic">Image option</span>
+                    <span className="font-medium text-gray-700 italic">Image option</span>
                   ) : (
-                    <span className="font-medium text-gray-400">Empty option</span>
+                    <span className="font-medium text-gray-600">Empty option</span>
                   )}
                 </div>
                 {isSelected && (
@@ -119,7 +119,7 @@ export function PollVotingInterface({
       )}
 
       <div className="flex items-center justify-between pt-4">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-600">
           {pollType === 'single' || pollType === 'yesno'
             ? 'Select one option'
             : 'Select one or more options'}

@@ -17,9 +17,17 @@ async function duplicatePoll(req: AuthenticatedRequest, { params }: RouteParams)
     const body = await req.json()
     const { title: newTitle, resetVotes = true } = body
 
-    if (!id) {
+    if (!id || id === 'undefined' || id === 'null') {
       return NextResponse.json(
         { error: 'Poll ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate ObjectId format
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return NextResponse.json(
+        { error: 'Invalid poll ID format' },
         { status: 400 }
       )
     }

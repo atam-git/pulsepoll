@@ -192,7 +192,7 @@ export function PollVotingForm({ poll, onVoteSubmitted }: PollVotingFormProps) {
       {/* Ranking */}
       {poll.type === 'ranking' && (
         <div className="space-y-3">
-          <p className="text-sm text-gray-500">Assign a rank to each option (1 = best).</p>
+          <p className="text-sm text-gray-600">Assign a rank to each option (1 = best).</p>
           {poll.options.map(option => (
             <div key={option.id} className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
               <select

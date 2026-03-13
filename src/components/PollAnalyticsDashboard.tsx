@@ -99,7 +99,7 @@ export function PollAnalyticsDashboard({
     return (
       <div className="text-center p-8">
         <p className="text-red-600 mb-4">Error loading analytics</p>
-        <p className="text-sm text-gray-500 mb-4">{error}</p>
+        <p className="text-sm text-gray-600 mb-4">{error}</p>
         <button
           onClick={fetchAnalytics}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -112,7 +112,7 @@ export function PollAnalyticsDashboard({
 
   if (!data) {
     return (
-      <div className="text-center p-8 text-gray-500">
+      <div className="text-center p-8 text-gray-600">
         No analytics data available
       </div>
     )
@@ -126,7 +126,7 @@ export function PollAnalyticsDashboard({
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{poll.title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{poll.title || 'Untitled Poll'}</h2>
             <p className="text-gray-600">Analytics Dashboard</p>
           </div>
           <div className="flex items-center space-x-3">
@@ -137,7 +137,7 @@ export function PollAnalyticsDashboard({
               <span>📊</span>
               <span>Export Data</span>
             </button>
-            <div className="text-right text-sm text-gray-500">
+            <div className="text-right text-sm text-gray-600">
               <p>Status: <span className="capitalize font-medium">{poll.status}</span></p>
               {lastUpdated && (
                 <p>Updated: {lastUpdated.toLocaleTimeString()}</p>
@@ -178,7 +178,7 @@ export function PollAnalyticsDashboard({
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'analytics'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
               }`}
             >
               Analytics
@@ -188,7 +188,7 @@ export function PollAnalyticsDashboard({
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'exports'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300'
               }`}
             >
               Exports
@@ -219,7 +219,7 @@ export function PollAnalyticsDashboard({
                 <span className="font-medium">{option.text}</span>
                 <div className="text-right">
                   <span className="text-lg font-bold">{option.voteCount}</span>
-                  <span className="text-sm text-gray-500 ml-2">
+                  <span className="text-sm text-gray-600 ml-2">
                     ({option.percentage.toFixed(1)}%)
                   </span>
                 </div>

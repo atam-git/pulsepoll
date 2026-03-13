@@ -93,10 +93,10 @@ PollOptionSchema.pre('validate', function() {
 const PollSchema = new Schema<IPoll>({
   title: {
     type: String,
-    required: [true, 'Poll title is required'],
+    required: false,
     trim: true,
-    minlength: [5, 'Poll title must be at least 5 characters'],
-    maxlength: [200, 'Poll title cannot exceed 200 characters']
+    maxlength: [200, 'Poll title cannot exceed 200 characters'],
+    default: ''
   },
   description: {
     type: String,
@@ -164,7 +164,7 @@ const PollSchema = new Schema<IPoll>({
       values: ['draft', 'active', 'expired', 'closed'],
       message: 'Status must be one of: draft, active, expired, closed'
     },
-    default: 'draft'
+    default: 'active'
   },
   moderation: {
     isFlagged: {
