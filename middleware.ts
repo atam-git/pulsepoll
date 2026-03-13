@@ -8,10 +8,10 @@ import { getToken } from 'next-auth/jwt'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Skip middleware for static files and API auth routes
+  // Skip middleware for static files and ALL API routes
   if (
     pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/auth/') ||
+    pathname.startsWith('/api/') ||
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/public/') ||
     pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|css|js)$/)
@@ -110,12 +110,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api/auth (NextAuth.js routes)
+     * - api (ALL API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
   ],
 }
