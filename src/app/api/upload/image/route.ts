@@ -1,28 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
-import crypto from 'crypto'
+import { v2 as cloudinary } from 'cloudinary'
 import sharp from 'sharp'
 
-const UPLOAD_DIR = path.join(process.cwd(), '.storage', 'images')
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_WIDTH = 1200
 const MAX_HEIGHT = 800
 
-// Initialize upload directory
-async function initUploadDir() {
-  try {
-    await fs.mkdir(UPLOAD_DIR, { recursive: true })
-  } catch (error) {
-    console.error('Failed to create upload directory:', error)
-  }
-}
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export async function POST(request: NextRequest) {
   try {
-    await initUploadDir()
-
     const formData = await request.formData()
     const file = formData.get('image') as File
 
@@ -49,12 +42,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate unique filename
-    const fileId = crypto.randomUUID()
-    const originalExtension = path.extname(file.name)
-    const filename = `${fileId}${originalExtension}`
-    const filePath = path.join(UPLOAD_DIR, filename)
-
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
@@ -68,7 +55,7 @@ export async function POST(request: NextRequest) {
           fit: 'inside',
           withoutEnlargement: true
         })
-        .jpeg({ quality: 85 }) // Convert to JPEG for consistency and smaller size
+        .jpeg({ quality: 85 })
         .toBuffer()
     } catch (error) {
       console.error('Image processing error:', error)
@@ -78,21 +65,29 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save processed image
-    const processedFilename = `${fileId}.jpg`
-    const processedFilePath = path.join(UPLOAD_DIR, processedFilename)
-    await fs.writeFile(processedFilePath, processedBuffer)
+    // Upload to Cloudinary
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'pulsepoll',
+          resource_type: 'image',
+          format: 'jpg',
+        },
+        (error, result) => {
+          if (error) reject(error)
+          else resolve(result)
+        }
+      )
+      uploadStream.end(processedBuffer)
+    })
 
     // Get image metadata
     const metadata = await sharp(processedBuffer).metadata()
 
-    // Generate public URL
-    const imageUrl = `/api/upload/image/${fileId}.jpg`
-
     return NextResponse.json({
       success: true,
-      imageUrl,
-      fileId,
+      imageUrl: uploadResult.secure_url,
+      fileId: uploadResult.public_id,
       metadata: {
         width: metadata.width,
         height: metadata.height,

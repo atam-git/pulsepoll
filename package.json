@@ -20,6 +20,7 @@
     "@types/jest": "^30.0.0",
     "@types/qrcode": "^1.5.6",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.9.0",
     "dotenv": "^17.3.1",
     "fast-check": "^4.6.0",
     "form-data": "^4.0.5",
