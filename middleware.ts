@@ -31,13 +31,16 @@ export async function middleware(request: NextRequest) {
   // Check if current path is a voting page (public)
   const isVotingPage = pathname.match(/^\/vote\/[^\/]+$/)
   
+  // Check if current path is a results page (public)
+  const isResultsPage = pathname.match(/^\/results\/[^\/]+$/)
+  
   // Check if current path is a public auth route
   const isPublicRoute = publicRoutes.some(route => 
     pathname.startsWith(route)
   )
 
-  // Allow access to voting pages and auth routes without authentication
-  if (isVotingPage || isPublicRoute) {
+  // Allow access to voting pages, results pages, and auth routes without authentication
+  if (isVotingPage || isResultsPage || isPublicRoute) {
     return NextResponse.next()
   }
 
