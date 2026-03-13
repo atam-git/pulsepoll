@@ -66,6 +66,7 @@ export function PollVotingInterface({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showErrorModal, setShowErrorModal] = useState(false)
 
   const handleOptionClick = (optionId: string) => {
     if (pollType === 'single' || pollType === 'yesno') {
@@ -102,7 +103,9 @@ export function PollVotingInterface({
 
       onVoteSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit vote')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit vote'
+      setError(errorMessage)
+      setShowErrorModal(true)
     } finally {
       setSubmitting(false)
     }
@@ -110,6 +113,23 @@ export function PollVotingInterface({
 
   return (
     <div className={styles.votingInterface}>
+      {showErrorModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowErrorModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.errorIcon}>
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <h2>Oops!</h2>
+            <p>{error}</p>
+            <button onClick={() => setShowErrorModal(false)} className={styles.modalButton}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className={styles.optionsGrid}>
         {options.map((option, index) => {
           const isSelected = selectedOptions.includes(option.id)
@@ -145,10 +165,6 @@ export function PollVotingInterface({
           )
         })}
       </div>
-
-      {error && (
-        <div className={styles.errorMessage}>{error}</div>
-      )}
 
       <div className={styles.actionButtons}>
         <button
