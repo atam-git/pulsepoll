@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircleIcon } from '@heroicons/react/24/outline'
 
 interface PollOption {
   id: string
@@ -15,27 +14,57 @@ interface PollVotingInterfaceProps {
   pollType: 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'
   options: PollOption[]
   onVoteSuccess: () => void
+  onViewResults?: () => void
+}
+
+function RadioSelectedIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2ZM12 4C9.87827 4 7.84344 4.84285 6.34315 6.34315C4.84285 7.84344 4 9.87827 4 12C4 14.1217 4.84285 16.1566 6.34315 17.6569C7.84344 19.1571 9.87827 20 12 20C14.1217 20 16.1566 19.1571 17.6569 17.6569C19.1571 16.1566 20 14.1217 20 12C20 9.87827 19.1571 7.84344 17.6569 6.34315C16.1566 4.84285 14.1217 4 12 4ZM12 8C13.0609 8 14.0783 8.42143 14.8284 9.17157C15.5786 9.92172 16 10.9391 16 12C16 13.0609 15.5786 14.0783 14.8284 14.8284C14.0783 15.5786 13.0609 16 12 16C10.9391 16 9.92172 15.5786 9.17157 14.8284C8.42143 14.0783 8 13.0609 8 12C8 10.9391 8.42143 9.92172 9.17157 9.17157C9.92172 8.42143 10.9391 8 12 8ZM12 10C11.4696 10 10.9609 10.2107 10.5858 10.5858C10.2107 10.9609 10 11.4696 10 12C10 12.5304 10.2107 13.0391 10.5858 13.4142C10.9609 13.7893 11.4696 14 12 14C12.5304 14 13.0391 13.7893 13.4142 13.4142C13.7893 13.0391 14 12.5304 14 12C14 11.4696 13.7893 10.9609 13.4142 10.5858C13.0391 10.2107 12.5304 10 12 10Z"
+        fill="#09244B"
+      />
+    </svg>
+  )
+}
+
+function RadioEmptyIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2ZM12 4C9.87827 4 7.84344 4.84285 6.34315 6.34315C4.84285 7.84344 4 9.87827 4 12C4 14.1217 4.84285 16.1566 6.34315 17.6569C7.84344 19.1571 9.87827 20 12 20C14.1217 20 16.1566 19.1571 17.6569 17.6569C19.1571 16.1566 20 14.1217 20 12C20 9.87827 19.1571 7.84344 17.6569 6.34315C16.1566 4.84285 14.1217 4 12 4Z"
+        fill="#09244B"
+      />
+    </svg>
+  )
 }
 
 export function PollVotingInterface({
   pollId,
   pollType,
   options,
-  onVoteSuccess
+  onVoteSuccess,
+  onViewResults,
 }: PollVotingInterfaceProps) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const hasImages = options.some((opt) => opt.imageUrl)
+  const isMultiSelect = pollType === 'multiple'
+
   const handleOptionClick = (optionId: string) => {
-    if (pollType === 'single' || pollType === 'yesno') {
-      setSelectedOptions([optionId])
-    } else if (pollType === 'multiple') {
-      setSelectedOptions(prev =>
-        prev.includes(optionId)
-          ? prev.filter(id => id !== optionId)
-          : [...prev, optionId]
+    if (submitting) return
+    if (isMultiSelect) {
+      setSelectedOptions((prev) =>
+        prev.includes(optionId) ? prev.filter((id) => id !== optionId) : [...prev, optionId]
       )
+    } else {
+      setSelectedOptions([optionId])
     }
   }
 
@@ -52,9 +81,7 @@ export function PollVotingInterface({
       const response = await fetch(`/api/polls/${pollId}/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          votes: selectedOptions
-        })
+        body: JSON.stringify({ votes: selectedOptions }),
       })
 
       if (!response.ok) {
@@ -71,66 +98,79 @@ export function PollVotingInterface({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-3">
-        {options.map((option) => {
-          const isSelected = selectedOptions.includes(option.id)
-          return (
-            <button
-              key={option.id}
-              onClick={() => handleOptionClick(option.id)}
-              disabled={submitting}
-              className={`w-full text-left p-4 border-2 rounded-lg transition-all ${
-                isSelected
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              } ${submitting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1">
-                  {option.imageUrl && (
-                    <img
-                      src={option.imageUrl}
-                      alt={`${option.text || 'Option'} image`}
-                      className="w-16 h-12 object-cover rounded border border-gray-200 flex-shrink-0"
-                    />
-                  )}
-                  {option.text ? (
-                    <span className="font-medium">{option.text}</span>
-                  ) : option.imageUrl ? (
-                    <span className="font-medium text-gray-500 italic">Image option</span>
-                  ) : (
-                    <span className="font-medium text-gray-400">Empty option</span>
-                  )}
+    <div className="poll-voting-root">
+      {hasImages ? (
+        <div className="poll-image-options-grid">
+          {options.map((option) => {
+            const isSelected = selectedOptions.includes(option.id)
+            return (
+              <button
+                key={option.id}
+                onClick={() => handleOptionClick(option.id)}
+                disabled={submitting}
+                className={`poll-image-option-card${isSelected ? ' poll-image-option-card--selected' : ''}`}
+              >
+                <img
+                  src={option.imageUrl}
+                  alt={option.text || 'Poll option'}
+                  className="poll-option-image"
+                />
+                <div className="poll-option-label-row">
+                  {isSelected ? <RadioSelectedIcon /> : <RadioEmptyIcon />}
+                  <span className="poll-option-label-text">
+                    {option.text || 'Option'}
+                  </span>
                 </div>
-                {isSelected && (
-                  <CheckCircleIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />
-                )}
-              </div>
-            </button>
-          )
-        })}
-      </div>
+              </button>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="poll-text-options-list">
+          {options.map((option) => {
+            const isSelected = selectedOptions.includes(option.id)
+            return (
+              <button
+                key={option.id}
+                onClick={() => handleOptionClick(option.id)}
+                disabled={submitting}
+                className={`poll-text-option-card${isSelected ? ' poll-text-option-card--selected' : ''}`}
+              >
+                <div className="poll-text-option-inner">
+                  {isSelected ? <RadioSelectedIcon /> : <RadioEmptyIcon />}
+                  <span className="poll-text-option-text">
+                    {option.text || 'Option'}
+                  </span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+        <div className="poll-error-banner">
           {error}
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4">
-        <p className="text-sm text-gray-500">
-          {pollType === 'single' || pollType === 'yesno'
-            ? 'Select one option'
-            : 'Select one or more options'}
-        </p>
+      <div className="poll-actions-row">
         <button
           onClick={handleSubmitVote}
           disabled={submitting || selectedOptions.length === 0}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="poll-vote-btn"
         >
-          {submitting ? 'Submitting...' : 'Submit Vote'}
+          {submitting ? 'Submitting...' : 'Vote'}
         </button>
+        {onViewResults && (
+          <button
+            onClick={onViewResults}
+            disabled={submitting}
+            className="poll-result-btn"
+          >
+            Result
+          </button>
+        )}
       </div>
     </div>
   )

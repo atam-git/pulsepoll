@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { PollVotingInterface } from '@/components/PollVotingInterface'
 
 interface Poll {
@@ -11,7 +11,8 @@ interface Poll {
   type: string
   options: Array<{
     id: string
-    text: string
+    text?: string
+    imageUrl?: string
     voteCount: number
   }>
   metadata: {
@@ -23,23 +24,21 @@ interface Poll {
 
 export default function VotePage() {
   const params = useParams()
+  const router = useRouter()
   const pollId = params.id as string
-  
+
   const [poll, setPoll] = useState<Poll | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [hasVoted, setHasVoted] = useState(false)
 
-  // Fetch poll data
   useEffect(() => {
     if (!pollId) return
 
     const fetchPoll = async () => {
       try {
         const response = await fetch(`/api/polls/${pollId}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch poll')
-        }
+        if (!response.ok) throw new Error('Failed to fetch poll')
         const data = await response.json()
         setPoll(data.poll)
         setLoading(false)
@@ -52,86 +51,63 @@ export default function VotePage() {
     fetchPoll()
   }, [pollId])
 
-  const handleVoteSuccess = () => {
-    setHasVoted(true)
-  }
+  const handleVoteSuccess = () => setHasVoted(true)
+  const handleViewResults = () => router.push(`/poll/${pollId}`)
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading poll...</p>
-        </div>
+      <div className="vote-loading-state">
+        <div className="vote-spinner" />
+        <p className="vote-loading-text">Loading poll...</p>
       </div>
     )
   }
 
   if (error || !poll) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Poll Not Found</h1>
-          <p className="text-gray-600">{error || 'This poll does not exist or is no longer available.'}</p>
-        </div>
+      <div className="vote-error-state">
+        <h1 className="vote-error-title">Poll Not Found</h1>
+        <p className="vote-error-message">
+          {error || 'This poll does not exist or is no longer available.'}
+        </p>
       </div>
     )
   }
 
   if (hasVoted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md mx-auto text-center">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
-            <p className="text-gray-600 mb-6">Your vote has been recorded successfully.</p>
-            <div className="text-sm text-gray-500">
-              <p>Poll: {poll.title}</p>
-            </div>
+      <div className="vote-success-state">
+        <div className="vote-success-card">
+          <div className="vote-success-icon-wrapper">
+            <svg className="vote-success-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
+          <h2 className="vote-success-heading">Thank You!</h2>
+          <p className="vote-success-body">Your vote has been recorded successfully.</p>
+          <p className="vote-success-poll-name">{poll.title}</p>
+          <button onClick={handleViewResults} className="vote-results-link-btn">
+            View Results
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        {/* Poll Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{poll.title}</h1>
-          {poll.description && (
-            <p className="text-gray-600 mb-4">{poll.description}</p>
-          )}
-          
-          <div className="flex items-center text-sm text-gray-500 space-x-4">
-            <span>Type: {poll.type}</span>
-            <span>{poll.metadata.totalVotes} votes</span>
-          </div>
-        </div>
-
-        {/* Voting Interface */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Cast Your Vote</h2>
-          <PollVotingInterface
-            pollId={pollId}
-            pollType={poll.type as any}
-            options={poll.options}
-            onVoteSuccess={handleVoteSuccess}
-          />
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-sm text-gray-500">
-            Powered by PulsePoll
-          </p>
-        </div>
+    <div className="vote-page-wrapper">
+      <div className="vote-page-inner">
+        <h1 className="vote-poll-question">{poll.title}</h1>
+        {poll.description && (
+          <p className="vote-poll-description">{poll.description}</p>
+        )}
+        <PollVotingInterface
+          pollId={pollId}
+          pollType={poll.type as any}
+          options={poll.options}
+          onVoteSuccess={handleVoteSuccess}
+          onViewResults={handleViewResults}
+        />
       </div>
     </div>
   )
