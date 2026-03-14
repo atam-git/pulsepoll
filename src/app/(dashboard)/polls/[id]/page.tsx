@@ -124,8 +124,8 @@ export default function PollDetailsPage() {
           )}
 
           {/* Poll info */}
-          <div className="mb-4">
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-800 mb-4">
+          <div className="poll-info-section mb-4">
+            <div className="poll-info-details flex flex-wrap items-center gap-4 text-sm text-gray-800 mb-4">
               <span>Type: <span className="font-medium capitalize">{currentPoll.type}</span></span>
               <span>Status: <span className="font-medium">{currentPoll.metadata.status}</span></span>
               <span><span className="font-medium">{currentPoll.metadata.totalVotes}</span> votes</span>
@@ -137,10 +137,10 @@ export default function PollDetailsPage() {
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-2 mb-4">
+          <div className="poll-header-actions flex flex-wrap items-center gap-2 mb-4">
             <button
               onClick={() => setShowShareDialog(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+              className="poll-action-btn share-btn flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
@@ -152,7 +152,7 @@ export default function PollDetailsPage() {
               href={`/vote/${pollId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+              className="poll-action-btn voting-page-btn flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -162,7 +162,7 @@ export default function PollDetailsPage() {
 
             <Link
               href={`/poll/${pollId}/edit`}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+              className="poll-action-btn edit-btn flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -184,7 +184,7 @@ export default function PollDetailsPage() {
                   }
                 }
               }}
-              className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+              className="poll-action-btn clear-votes-btn flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -194,11 +194,11 @@ export default function PollDetailsPage() {
           </div>
 
           {/* Tab Navigation */}
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-4 sm:space-x-8">
+          <div className="poll-tabs-container border-b border-gray-200">
+            <nav className="poll-tabs-nav -mb-px flex space-x-4 sm:space-x-8">
               <button
                 onClick={() => setActiveTab('results')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`poll-tab results-tab py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'results'
                     ? 'border-green-500 text-green-600'
                     : 'border-transparent text-gray-800 hover:text-gray-900 hover:border-gray-300'
@@ -208,7 +208,7 @@ export default function PollDetailsPage() {
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={`poll-tab preview-tab py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'preview'
                     ? 'border-green-500 text-green-600'
                     : 'border-transparent text-gray-800 hover:text-gray-900 hover:border-gray-300'
@@ -232,7 +232,7 @@ export default function PollDetailsPage() {
 
         {/* Tab Content */}
         {activeTab === 'results' && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+          <Card padding="lg" className="mb-6">
             <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900">Results</h2>
             
             {currentPoll.metadata.totalVotes === 0 ? (
@@ -241,8 +241,8 @@ export default function PollDetailsPage() {
               // Always show detailed results
               <div className="space-y-3 sm:space-y-4">
                 {/* Summary Stats */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div className="poll-results-summary bg-gray-50 rounded-lg p-4 mb-6">
+                  <div className="poll-stats-grid grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div>
                       <div className="text-2xl font-bold text-gray-900">{currentPoll.metadata.totalVotes}</div>
                       <div className="text-sm text-gray-600">Total Votes</div>
@@ -274,7 +274,7 @@ export default function PollDetailsPage() {
                   const isWinning = option.voteCount === Math.max(...currentPoll.options.map((opt: any) => opt.voteCount))
                   
                   return (
-                    <div key={option.id} className={`border rounded-lg p-3 sm:p-4 ${isWinning && option.voteCount > 0 ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
+                    <div key={option.id} className={`poll-option-result border rounded-lg p-3 sm:p-4 ${isWinning && option.voteCount > 0 ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1 pr-4">
                           <div className="flex items-center gap-3 mb-2">
@@ -341,9 +341,9 @@ export default function PollDetailsPage() {
 
                 {/* Additional Insights */}
                 {currentPoll.metadata.totalVotes > 0 && (
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">Poll Insights</h3>
-                    <div className="text-sm text-gray-700 space-y-1">
+                  <div className="poll-insights-section mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 className="poll-insights-title font-medium text-gray-900 mb-2">Poll Insights</h3>
+                    <div className="poll-insights-details text-sm text-gray-700 space-y-1">
                       <div>
                         • Most popular choice: <span className="font-medium">
                           {currentPoll.options.find((opt: any) => 
@@ -368,13 +368,13 @@ export default function PollDetailsPage() {
                 )}
               </div>
             )}
-          </div>
+          </Card>
         )}
 
         {activeTab === 'preview' && (
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+          <Card padding="lg" className="mb-6">
             <h2 className="text-lg font-semibold mb-4 text-gray-900">Poll Preview</h2>
-            <div className="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300">
+            <div className="poll-preview-mode-container bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300">
               <div className="text-center mb-6">
                 <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mb-4">
                   Preview Mode - This is how voters see your poll
@@ -382,8 +382,8 @@ export default function PollDetailsPage() {
               </div>
               
               {/* Poll Question Display */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
-                <h2 className="text-xl font-bold text-gray-900 mb-3">{currentPoll.title || 'Untitled Poll'}</h2>
+              <div className="poll-preview-content bg-white rounded-lg shadow-sm p-6 mb-4">
+                <h2 className="poll-preview-title text-xl font-bold text-gray-900 mb-3">{currentPoll.title || 'Untitled Poll'}</h2>
                 {currentPoll.description && (
                   <p className="text-gray-700 mb-6">{currentPoll.description}</p>
                 )}
@@ -395,11 +395,11 @@ export default function PollDetailsPage() {
                   {/* Check if any option has an image to determine layout */}
                   {currentPoll.options.some((option: any) => option.imageUrl) ? (
                     // Image-based poll layout (grid)
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="poll-preview-options-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {currentPoll.options.map((option: { id: string; text: string; imageUrl?: string }, index: number) => (
-                        <div key={option.id} className="flex flex-col gap-3 cursor-pointer">
+                        <div key={option.id} className="poll-preview-option flex flex-col gap-3 cursor-pointer">
                           {/* Image wrapper with aspect ratio */}
-                          <div className="w-full aspect-[4/5] overflow-hidden rounded border-2 border-gray-200 bg-gray-100 hover:border-gray-300 transition-colors">
+                          <div className="poll-preview-image-container w-full aspect-[4/5] overflow-hidden rounded border-2 border-gray-200 bg-gray-100 hover:border-gray-300 transition-colors">
                             {option.imageUrl ? (
                               <img
                                 src={option.imageUrl}
@@ -416,8 +416,8 @@ export default function PollDetailsPage() {
                           </div>
                           
                           {/* Radio button and label */}
-                          <div className="flex items-center gap-2">
-                            <div className="flex-shrink-0">
+                          <div className="poll-preview-option-label flex items-center gap-2">
+                            <div className="poll-preview-radio flex-shrink-0">
                               {currentPoll.type === 'multiple_choice' ? (
                                 <div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
                               ) : (
@@ -433,10 +433,10 @@ export default function PollDetailsPage() {
                     </div>
                   ) : (
                     // Text-only poll layout (list)
-                    <div className="space-y-3">
+                    <div className="poll-preview-options-list space-y-3">
                       {currentPoll.options.map((option: { id: string; text: string }, index: number) => (
-                        <div key={option.id} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                          <div className="flex-shrink-0">
+                        <div key={option.id} className="poll-preview-option-text flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                          <div className="poll-preview-radio flex-shrink-0">
                             {currentPoll.type === 'multiple_choice' ? (
                               <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                             ) : (
@@ -452,10 +452,10 @@ export default function PollDetailsPage() {
                 </div>
                 
                 {/* Mock Vote Button */}
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <button 
+                <div className="poll-preview-submit-section mt-6 pt-4 border-t border-gray-200">
+                  <button
                     disabled
-                    className="w-full py-3 px-4 bg-gray-300 text-gray-500 rounded-lg font-medium cursor-not-allowed"
+                    className="poll-preview-submit-btn w-full py-3 px-4 bg-gray-300 text-gray-500 rounded-lg font-medium cursor-not-allowed"
                   >
                     Submit Vote (Preview Mode)
                   </button>
@@ -463,14 +463,14 @@ export default function PollDetailsPage() {
               </div>
               
               {/* Poll Info as voters see it */}
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <div className="flex items-center justify-between text-sm text-gray-600">
+              <div className="poll-preview-info bg-white rounded-lg shadow-sm p-4">
+                <div className="poll-preview-metadata flex items-center justify-between text-sm text-gray-600">
                   <span>Poll Type: <span className="font-medium capitalize">{currentPoll.type.replace('_', ' ')}</span></span>
                   <span>Status: <span className="font-medium">{currentPoll.metadata.status}</span></span>
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* {activeTab === 'analytics' && (
