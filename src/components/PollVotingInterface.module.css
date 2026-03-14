@@ -211,6 +211,7 @@
   font-size: 24px;
   font-weight: 500;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s, opacity 0.2s;
   display: flex;
@@ -236,6 +237,7 @@
   font-size: 24px;
   font-weight: 500;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s, opacity 0.2s;
   display: flex;
@@ -252,6 +254,38 @@
   cursor: not-allowed;
 }
 
+.shareBtn {
+  width: 160px;
+  padding: 16px;
+  background: #94d510;
+  color: #fff;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.shareBtn:hover:not(:disabled) {
+  background: #7fb80e;
+}
+
+.shareBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shareBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* Responsive: 2 columns on tablet */
 @media (max-width: 1024px) {
   .optionsGrid {
@@ -264,9 +298,15 @@
   }
 
   .voteBtn,
-  .resultBtn {
+  .resultBtn,
+  .shareBtn {
     font-size: 18px;
     width: 140px;
+  }
+
+  .shareBtn svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -286,9 +326,15 @@
   }
 
   .voteBtn,
-  .resultBtn {
+  .resultBtn,
+  .shareBtn {
     font-size: 16px;
     width: 130px;
     padding: 14px;
+  }
+
+  .shareBtn svg {
+    width: 16px;
+    height: 16px;
   }
 }

@@ -31,6 +31,34 @@ export default function ResultsPage() {
   const [poll, setPoll] = useState<Poll | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showCopied, setShowCopied] = useState(false)
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/vote/${pollId}`
+    const shareData = {
+      title: poll?.title || 'Vote on this poll',
+      text: poll?.description || 'Check out this poll',
+      url: shareUrl
+    }
+
+    // Check if mobile (has native share API)
+    if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.log('Share cancelled or failed:', err)
+      }
+    } else {
+      // Desktop: copy link
+      try {
+        await navigator.clipboard.writeText(shareUrl)
+        setShowCopied(true)
+        setTimeout(() => setShowCopied(false), 2000)
+      } catch (err) {
+        console.error('Failed to copy:', err)
+      }
+    }
+  }
 
   useEffect(() => {
     if (!pollId) return
@@ -85,9 +113,23 @@ export default function ResultsPage() {
           alt="Connect Nigeria"
           className={styles.headerLogo}
         />
+        <button onClick={handleShare} className={styles.shareBtn}>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          Share
+        </button>
+        {showCopied && <span className={styles.copiedTooltip}>Copied!</span>}
       </header>
 
       <main className={styles.resultsMain}>
+        <div className={styles.topSection}>
+          <h2 className={styles.resultsHeading}>Results</h2>
+          <button onClick={() => window.location.href = `/vote/${pollId}`} className={styles.voteBtn}>
+            Vote
+          </button>
+        </div>
+
         <h1 className={styles.pollTitle}>{poll.title}</h1>
         {poll.description && (
           <p className={styles.pollDescription}>{poll.description}</p>
@@ -147,6 +189,15 @@ export default function ResultsPage() {
               </div>
             )
           })}
+        </div>
+
+        <div className={styles.bottomActions}>
+          <button onClick={handleShare} className={styles.bottomShareBtn}>
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Share
+          </button>
         </div>
       </main>
     </div>

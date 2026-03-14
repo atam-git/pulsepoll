@@ -220,6 +220,7 @@ export default function VotePage() {
           options={poll.options}
           onVoteSuccess={handleVoteSuccess}
           onViewResults={handleViewResults}
+          onShare={handleShare}
         />
       </main>
     </div>

@@ -100,25 +100,26 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
     }
   }
 
-  const handleDuplicatePoll = async (pollId: string) => {
+  const handleClearVotes = async (pollId: string) => {
+    if (!confirm('Are you sure you want to clear all votes for this poll? This action cannot be undone.')) {
+      return
+    }
+
     try {
-      const response = await fetch(`/api/polls/${pollId}/duplicate`, {
+      const response = await fetch(`/api/polls/${pollId}/clear-votes`, {
         method: 'POST'
       })
 
       if (!response.ok) {
-        throw new Error('Failed to duplicate poll')
+        throw new Error('Failed to clear votes')
       }
 
-      const data = await response.json()
-      
       // Refresh the polls list
       fetchPolls()
       
-      // Optionally redirect to the new poll
-      alert(`Poll duplicated successfully! New poll ID: ${data.poll.id}`)
+      alert('Votes cleared successfully!')
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to duplicate poll')
+      alert(err instanceof Error ? err.message : 'Failed to clear votes')
     }
   }
 
@@ -385,10 +386,10 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
                       Vote
                     </a>
                     <button
-                      onClick={() => handleDuplicatePoll(poll.id)}
-                      className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                      onClick={() => handleClearVotes(poll.id)}
+                      className="px-3 py-1 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
                     >
-                      Duplicate
+                      Clear Votes
                     </button>
                     <button
                       onClick={() => handleDeletePoll(poll.id)}

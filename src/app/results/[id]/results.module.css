@@ -11,15 +11,58 @@
   height: 64px;
   padding: 0 32px;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid #ebebeb;
   background: #fff;
   box-sizing: border-box;
+  position: relative;
 }
 
 .headerLogo {
   width: 106px;
   height: 38px;
   object-fit: contain;
+}
+
+.shareBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #94d510;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.shareBtn:hover {
+  background: #7fb80e;
+}
+
+.shareBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.copiedTooltip {
+  position: absolute;
+  top: 70px;
+  right: 32px;
+  background: #333;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  10%, 90% { opacity: 1; }
 }
 
 /* Main content */
@@ -30,6 +73,37 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+}
+
+.topSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.resultsHeading {
+  color: #000;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.voteBtn {
+  padding: 12px 32px;
+  background: #000;
+  color: #fff;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.voteBtn:hover {
+  background: #222;
 }
 
 .pollTitle {
@@ -244,6 +318,41 @@
   font-size: 15px;
 }
 
+/* Bottom actions */
+.bottomActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.bottomShareBtn {
+  width: 200px;
+  padding: 16px;
+  background: #94d510;
+  color: #fff;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bottomShareBtn:hover {
+  background: #7fb80e;
+}
+
+.bottomShareBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* Responsive: 2 columns on tablet */
 @media (max-width: 1024px) {
   .resultsGrid {
@@ -266,9 +375,37 @@
     padding: 0 16px;
   }
 
+  .shareBtn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .shareBtn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .copiedTooltip {
+    right: 16px;
+  }
+
   .resultsMain {
     padding: 24px 16px 48px;
     gap: 24px;
+  }
+
+  .topSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .resultsHeading {
+    font-size: 20px;
+  }
+
+  .voteBtn {
+    width: 100%;
+    padding: 14px;
   }
 
   .resultsGrid {
@@ -295,5 +432,16 @@
 
   .percentage {
     font-size: 20px;
+  }
+
+  .bottomShareBtn {
+    width: 100%;
+    max-width: 300px;
+    font-size: 16px;
+  }
+
+  .bottomShareBtn svg {
+    width: 18px;
+    height: 18px;
   }
 }
