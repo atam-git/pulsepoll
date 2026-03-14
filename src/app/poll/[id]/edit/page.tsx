@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import { PollCreationWizard } from '@/components/PollCreationWizard'
 
 export default function EditPollPage() {
+  const { data: session } = useSession()
   const router = useRouter()
   const params = useParams()
   const pollId = params.id as string
@@ -37,43 +40,41 @@ export default function EditPollPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 sm:py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center p-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-          </div>
+      <DashboardLayout user={session?.user}>
+        <div className="flex items-center justify-center p-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
         </div>
-      </div>
+      </DashboardLayout>
     )
   }
 
   if (error || !poll) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 sm:py-12">
-        <div className="container mx-auto px-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl mx-auto">
+      <DashboardLayout user={session?.user}>
+        <div>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <h2 className="text-xl font-bold text-red-800 mb-2">Error Loading Poll</h2>
             <p className="text-red-600 mb-4">{error || 'Poll not found'}</p>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             >
               Back to Dashboard
             </button>
           </div>
         </div>
-      </div>
+      </DashboardLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 sm:py-12">
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-6 sm:mb-8">
+    <DashboardLayout user={session?.user}>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
           Edit <span className="text-green-600">Poll</span>
         </h1>
         <PollCreationWizard existingPoll={poll} isEditing={true} />
       </div>
-    </div>
+    </DashboardLayout>
   )
 }

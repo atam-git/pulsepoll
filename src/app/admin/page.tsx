@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { WelcomeSection } from '@/components/dashboard/WelcomeSection'
+import { StatsGrid } from '@/components/dashboard/StatsGrid'
+import { FeatureGrid } from '@/components/dashboard/FeatureGrid'
+import {
+  UsersIcon,
+  ClipboardDocumentListIcon,
+  CheckCircleIcon,
+  FireIcon,
+  Cog6ToothIcon,
+  ChartBarIcon,
+} from '@heroicons/react/24/outline'
 
 interface DashboardStats {
   totalUsers: number
@@ -47,8 +58,8 @@ export default function AdminDashboardPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-base mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading dashboard...</p>
         </div>
       </div>
     )
@@ -56,98 +67,99 @@ export default function AdminDashboardPage() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
         <p className="text-red-800">Error: {error}</p>
       </div>
     )
   }
 
+  const statsData = [
+    {
+      id: 'users',
+      icon: UsersIcon,
+      iconBgColor: 'bg-blue-500',
+      label: 'Total Users',
+      value: stats?.totalUsers || 0,
+    },
+    {
+      id: 'polls',
+      icon: ClipboardDocumentListIcon,
+      iconBgColor: 'bg-green-500',
+      label: 'Total Polls',
+      value: stats?.totalPolls || 0,
+    },
+    {
+      id: 'votes',
+      icon: CheckCircleIcon,
+      iconBgColor: 'bg-purple-500',
+      label: 'Total Votes',
+      value: stats?.totalVotes || 0,
+    },
+    {
+      id: 'active',
+      icon: FireIcon,
+      iconBgColor: 'bg-orange-500',
+      label: 'Active Polls',
+      value: stats?.activePolls || 0,
+    },
+  ]
+
+  const features = [
+    {
+      id: 'polls',
+      icon: ClipboardDocumentListIcon,
+      title: 'Manage Polls',
+      description: 'View, moderate, and manage all polls on the platform.',
+      linkText: 'Go to Polls',
+      linkHref: '/admin/polls',
+    },
+    {
+      id: 'users',
+      icon: Cog6ToothIcon,
+      title: 'Manage Users',
+      description: 'View user accounts, manage roles, and handle suspensions.',
+      linkText: 'Go to Users',
+      linkHref: '/admin/users',
+    },
+    {
+      id: 'analytics',
+      icon: ChartBarIcon,
+      title: 'View Analytics',
+      description: 'Access platform-wide analytics and performance metrics.',
+      linkText: 'View Analytics',
+      linkHref: '/admin/analytics',
+    },
+  ]
+
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-2">
-          Welcome back, {session?.user?.email}
-        </p>
-      </div>
+    <div className="space-y-8">
+      <WelcomeSection
+        userName={session?.user?.name || session?.user?.email || 'Admin'}
+        subtitle="Here's an overview of your platform."
+        ctaTitle="Admin Panel"
+        ctaDescription="Manage users, polls, and view analytics."
+        ctaButtonText="View Analytics"
+        ctaButtonHref="/admin/analytics"
+      />
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
-              <span className="text-2xl">👥</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Users</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.totalUsers || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-green-100 rounded-md p-3">
-              <span className="text-2xl">📋</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Polls</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.totalPolls || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-purple-100 rounded-md p-3">
-              <span className="text-2xl">✅</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Votes</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.totalVotes || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-              <span className="text-2xl">🔥</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Active Polls</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats?.activePolls || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <StatsGrid stats={statsData} />
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="rounded-lg border border-gray-200 bg-white">
+        <div className="border-b border-gray-200 px-6 py-4">
           <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
         </div>
         <div className="p-6">
           {stats?.recentActivity && stats.recentActivity.length > 0 ? (
             <div className="space-y-4">
               {stats.recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <span className="text-xl">
-                      {activity.type === 'user' && '👤'}
-                      {activity.type === 'poll' && '📋'}
-                      {activity.type === 'vote' && '✅'}
-                    </span>
-                  </div>
-                  <div className="ml-3 flex-1">
+                <div key={index} className="flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0">
+                    {activity.type === 'user' && '👤'}
+                    {activity.type === 'poll' && '📋'}
+                    {activity.type === 'vote' && '✅'}
+                  </span>
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-900">{activity.description}</p>
                     <p className="text-xs text-gray-500 mt-1">
                       {new Date(activity.timestamp).toLocaleString()}
@@ -162,38 +174,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a
-          href="/admin/polls"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Polls</h3>
-          <p className="text-gray-600 text-sm">
-            View, moderate, and manage all polls on the platform
-          </p>
-        </a>
-
-        <a
-          href="/admin/users"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Users</h3>
-          <p className="text-gray-600 text-sm">
-            View user accounts, manage roles, and handle suspensions
-          </p>
-        </a>
-
-        <a
-          href="/admin/analytics"
-          className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">View Analytics</h3>
-          <p className="text-gray-600 text-sm">
-            Access platform-wide analytics and performance metrics
-          </p>
-        </a>
-      </div>
+      <FeatureGrid features={features} />
     </div>
   )
 }

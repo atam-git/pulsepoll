@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 
-export default function AdminLayout({
+export default function DashboardLayoutWrapper({
   children,
 }: {
   children: React.ReactNode
@@ -18,35 +18,30 @@ export default function AdminLayout({
     if (status === 'loading') return
 
     if (status === 'unauthenticated') {
-      router.push('/auth/signin?callbackUrl=/admin')
-      return
-    }
-
-    if (session?.user?.role !== 'admin') {
-      router.push('/unauthorized')
+      router.push('/auth/login?redirect=/dashboard')
       return
     }
 
     setLoading(false)
-  }, [status, session, router])
+  }, [status, router])
 
   if (loading || status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-base mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading admin panel...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading dashboard...</p>
         </div>
       </div>
     )
   }
 
-  if (!session?.user || session.user.role !== 'admin') {
+  if (!session?.user) {
     return null
   }
 
   return (
-    <DashboardLayout user={session.user} isAdmin>
+    <DashboardLayout user={session.user}>
       {children}
     </DashboardLayout>
   )

@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --shadow-light-300: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 }
 
 @theme inline {
@@ -10,6 +11,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-primary-base: #00A651;
+  --color-primary-dark: #008c44;
+  --color-primary-light: #00c95f;
+  --color-secondary-base: #1e293b;
+  --color-light-850: #f8f9fa;
+  --color-light-800: #e9ecef;
+  --color-muted: #6b7280;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,3 +62,31 @@ body {
     opacity: 0.5;
   }
 }
+
+/* Custom scrollbar styles for sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Mobile menu animations */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-right { animation: slide-in-right 0.3s ease-out; }
+
+@keyframes fade-in-overlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in-overlay { animation: fade-in-overlay 0.2s ease-out; }

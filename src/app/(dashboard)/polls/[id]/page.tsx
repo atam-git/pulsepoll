@@ -1,11 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { PollRealTimeUpdates, usePollWithRealTime } from '@/components/PollRealTimeUpdates'
-import { PollAnalyticsDashboard } from '@/components/PollAnalyticsDashboard'
 import { PollShareDialog } from '@/components/PollShareDialog'
 
 interface Poll {
@@ -27,7 +25,6 @@ interface Poll {
 }
 
 export default function PollDetailsPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
   const params = useParams()
   const pollId = params.id as string
@@ -46,17 +43,10 @@ export default function PollDetailsPage() {
   } = usePollWithRealTime(poll)
 
   useEffect(() => {
-    if (status === 'loading') return
-
-    if (status === 'unauthenticated') {
-      router.push('/auth/login?redirect=/dashboard')
-      return
-    }
-
     if (pollId) {
       fetchPollDetails()
     }
-  }, [status, pollId, router])
+  }, [pollId])
 
   const fetchPollDetails = async () => {
     try {
@@ -81,9 +71,9 @@ export default function PollDetailsPage() {
     return Math.round((voteCount / totalVotes) * 100)
   }
 
-  if (loading || status === 'loading') {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
           <p>Loading poll details...</p>
@@ -92,49 +82,17 @@ export default function PollDetailsPage() {
     )
   }
 
-  if (!session?.user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-4">You need to be logged in to access this page.</p>
-          <button
-            onClick={() => router.push('/auth/login')}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   if (error || !poll) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="mb-6">
-            <Link
-              href="/dashboard"
-              className="flex items-center text-green-600 hover:text-green-700 font-medium"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to Dashboard
-            </Link>
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-            <p className="mb-4">{error || 'Poll not found'}</p>
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Back to Dashboard
-            </Link>
-          </div>
-        </div>
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
+        <p className="mb-4">{error || 'Poll not found'}</p>
+        <Link
+          href="/polls"
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Back to Polls
+        </Link>
       </div>
     )
   }
@@ -142,8 +100,7 @@ export default function PollDetailsPage() {
   const currentPoll = realtimePoll || poll
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <div>
         {/* Real-time updates component */}
         <div className="hidden">
           <PollRealTimeUpdates
@@ -152,19 +109,6 @@ export default function PollDetailsPage() {
             onVoteReceived={handleVoteReceived}
             showConnectionStatus={false}
           />
-        </div>
-
-        {/* Back to Dashboard Button */}
-        <div className="mb-6">
-          <Link
-            href="/dashboard"
-            className="flex items-center text-green-600 hover:text-green-700 font-medium"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Dashboard
-          </Link>
         </div>
 
         {/* Poll header */}
@@ -212,6 +156,38 @@ export default function PollDetailsPage() {
               </svg>
               <span>Voting Page</span>
             </a>
+
+            <Link
+              href={`/poll/${pollId}/edit`}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span>Edit Poll</span>
+            </Link>
+
+            <button
+              onClick={async () => {
+                if (confirm('Are you sure you want to clear all votes? This action cannot be undone.')) {
+                  try {
+                    const response = await fetch(`/api/polls/${pollId}/clear-votes`, { method: 'POST' })
+                    if (response.ok) {
+                      // Refresh poll data
+                      fetchPollDetails()
+                    }
+                  } catch (error) {
+                    console.error('Failed to clear votes:', error)
+                  }
+                }
+              }}
+              className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Clear Votes</span>
+            </button>
           </div>
 
           {/* Tab Navigation */}
@@ -511,6 +487,5 @@ export default function PollDetailsPage() {
           onClose={() => setShowShareDialog(false)}
         />
       </div>
-    </div>
   )
 }
