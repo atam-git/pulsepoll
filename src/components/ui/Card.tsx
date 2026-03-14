@@ -41,7 +41,7 @@ export function Card({
   const shadowClass = shadowMap[finalVariant]
   const borderClass = borderMap[finalVariant]
   const hoverClass = hover
-    ? 'transition-all duration-300 hover:shadow-lg hover:-translate-y-1'
+    ? 'transition-all duration-300 hover:shadow-md hover:-translate-y-1'
     : 'transition-shadow duration-200'
 
   return (

@@ -26,7 +26,7 @@ export function Input({
     ? 'border-2 border-red-500'
     : success
       ? 'border-2 border-green-500'
-      : 'border border-slate-300 hover:border-slate-400'
+      : 'border border-slate-200 hover:border-slate-300'
   const bgStyles = 'bg-white'
   const textStyles = 'text-slate-900 placeholder-slate-500'
   const focusStyles = error
