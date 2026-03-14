@@ -228,10 +228,10 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+      <div className="bg-white rounded-lg shadow p-4 md:p-6">
+        <div className="flex flex-col space-y-4">
           {/* Search */}
-          <div className="flex-1 max-w-md">
+          <div className="w-full">
             <input
               type="text"
               placeholder="Search polls..."
@@ -241,12 +241,12 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
             />
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             {/* Filter */}
             <select
               value={filterBy}
               onChange={(e) => setFilterBy(e.target.value as FilterOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
             >
               <option value="all">All Polls</option>
               <option value="active">Active</option>
@@ -259,7 +259,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -272,7 +272,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
             {/* Create New Poll Button */}
             <Link
               href="/poll/create"
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-center whitespace-nowrap"
             >
               Create Poll
             </Link>
@@ -318,10 +318,10 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
         <div className="space-y-4">
           {polls.map((poll) => (
             <div key={poll.id} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start justify-between">
+              <div className="p-4 md:p-6">
+                <div className="flex flex-col space-y-4">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
                         {onPollSelect ? (
                           <button
@@ -351,7 +351,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
                       <p className="text-gray-600 mb-3 line-clamp-2">{poll.description}</p>
                     )}
                     
-                    <div className="flex items-center space-x-6 text-sm text-gray-600">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-6 text-sm text-gray-600">
                       <span>📊 {poll.metadata.totalVotes} votes</span>
                       <span>👁️ {poll.metadata.viewCount} views</span>
                       <span>📅 {formatDate(poll.createdAt)}</span>
@@ -361,18 +361,18 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-2 ml-4">
+                  <div className="flex flex-wrap items-center gap-2">
                     {onPollSelect ? (
                       <button
                         onClick={() => onPollSelect(poll.id)}
-                        className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                        className="px-3 py-1.5 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
                       >
                         View
                       </button>
                     ) : (
                       <Link
                         href={`/poll/${poll.id}`}
-                        className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                        className="px-3 py-1.5 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
                       >
                         View
                       </Link>
@@ -381,19 +381,19 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
                       href={`/vote/${poll.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                      className="px-3 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                     >
                       Vote
                     </a>
                     <button
                       onClick={() => handleClearVotes(poll.id)}
-                      className="px-3 py-1 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
+                      className="px-3 py-1.5 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
                     >
                       Clear Votes
                     </button>
                     <button
                       onClick={() => handleDeletePoll(poll.id)}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                      className="px-3 py-1.5 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                     >
                       Delete
                     </button>
@@ -408,12 +408,12 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-gray-700 text-center sm:text-left">
               Showing {((currentPage - 1) * pollsPerPage) + 1} to {Math.min(currentPage * pollsPerPage, totalPolls)} of {totalPolls} polls
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2 flex-wrap justify-center">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
