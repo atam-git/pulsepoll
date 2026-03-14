@@ -12,10 +12,11 @@
   padding: 0 32px;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid #e5e7eb;
   background: #fff;
   box-sizing: border-box;
   position: relative;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .headerLogo {
@@ -29,18 +30,21 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #94d510;
+  background: #00A651;
   color: #fff;
   font-size: 15px;
   font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
 }
 
 .shareBtn:hover {
-  background: #7fb80e;
+  background: #008c44;
+  box-shadow: 0 4px 8px rgba(0, 166, 81, 0.3);
+  transform: translateY(-1px);
 }
 
 .shareBtn svg {
@@ -83,15 +87,15 @@
 }
 
 .resultsHeading {
-  color: #000;
-  font-size: 24px;
-  font-weight: 600;
+  color: #0f172a;
+  font-size: 28px;
+  font-weight: 700;
   margin: 0;
 }
 
 .voteBtn {
   padding: 12px 32px;
-  background: #000;
+  background: #00A651;
   color: #fff;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 16px;
@@ -99,51 +103,61 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
 }
 
 .voteBtn:hover {
-  background: #222;
+  background: #008c44;
+  box-shadow: 0 4px 8px rgba(0, 166, 81, 0.3);
+  transform: translateY(-2px);
 }
 
 .pollTitle {
-  color: #000;
-  font-size: 32px;
-  font-weight: 600;
-  line-height: normal;
+  color: #0f172a;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .pollDescription {
-  color: #444;
+  color: #475569;
   font-size: 16px;
-  margin: -16px 0 0;
+  line-height: 1.6;
+  margin: 12px 0 0;
+  font-weight: 400;
 }
 
 /* Stats bar */
 .statsBar {
   display: flex;
   gap: 32px;
-  padding: 24px;
-  background: #f9f9f9;
-  border-radius: 12px;
+  padding: 28px;
+  background: #f1f5f9;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
 }
 
 .statItem {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .statValue {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
-  color: #09244b;
+  color: #0f172a;
 }
 
 .statLabel {
-  font-size: 14px;
-  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Results grid */
@@ -156,21 +170,23 @@
 .resultCard {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
+  gap: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 300ms ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .resultCard:hover {
-  border-color: #09244b;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
 }
 
 .leadingCard {
-  border-color: #94d510;
-  box-shadow: 0 4px 16px rgba(148, 213, 16, 0.2);
+  border-color: #00A651;
+  box-shadow: 0 4px 16px rgba(0, 166, 81, 0.2);
 }
 
 .resultImageWrapper {
@@ -210,7 +226,7 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #94d510;
+  background: #00A651;
   color: white;
   padding: 6px 12px;
   border-radius: 20px;
@@ -219,7 +235,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 166, 81, 0.3);
 }
 
 .resultInfo {
@@ -259,8 +275,9 @@
 
 .progressFill {
   height: 100%;
-  background: #94d510;
+  background: #00A651;
   transition: width 0.3s ease;
+  border-radius: 4px;
 }
 
 .percentage {
@@ -287,7 +304,7 @@
   width: 48px;
   height: 48px;
   border: 3px solid #e5e5e5;
-  border-top-color: #94d510;
+  border-top-color: #00A651;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -329,7 +346,7 @@
 .bottomShareBtn {
   width: 200px;
   padding: 16px;
-  background: #94d510;
+  background: #00A651;
   color: #fff;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 18px;
@@ -337,15 +354,18 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 200ms ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
 }
 
 .bottomShareBtn:hover {
-  background: #7fb80e;
+  background: #008c44;
+  box-shadow: 0 4px 8px rgba(0, 166, 81, 0.3);
+  transform: translateY(-2px);
 }
 
 .bottomShareBtn svg {
