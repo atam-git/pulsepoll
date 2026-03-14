@@ -29,7 +29,7 @@ export function WelcomeSection({
       </div>
 
       {/* CTA Banner */}
-      <div className="flex flex-col gap-4 rounded-2xl bg-slate-900 p-8 text-white sm:flex-row sm:items-center sm:gap-6 md:max-w-md shadow-lg">
+      <div className="flex flex-col gap-4 rounded-xl bg-slate-900 p-8 text-white sm:flex-row sm:items-center sm:gap-6 md:max-w-md shadow-md hover:shadow-lg transition-shadow duration-300">
         <div className="flex-1">
           <h2 className="text-lg font-semibold text-white">{ctaTitle}</h2>
           <p className="mt-2 text-sm text-slate-300 leading-relaxed">{ctaDescription}</p>

@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { PollRealTimeUpdates, usePollWithRealTime } from '@/components/PollRealTimeUpdates'
 import { PollShareDialog } from '@/components/PollShareDialog'
+import { Button } from '@/components/ui/Button'
 
 interface Poll {
   id: string
@@ -87,12 +88,13 @@ export default function PollDetailsPage() {
       <div className="text-center">
         <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
         <p className="mb-4">{error || 'Poll not found'}</p>
-        <Link
+        <Button
           href="/polls"
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          variant="primary"
+          size="md"
         >
           Back to Polls
-        </Link>
+        </Button>
       </div>
     )
   }

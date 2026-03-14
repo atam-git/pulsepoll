@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
 
 interface Poll {
   id: string
@@ -314,12 +315,14 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-600">{error}</p>
-          <button
+          <Button
             onClick={fetchPolls}
-            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            variant="destructive"
+            size="md"
+            className="mt-2"
           >
             Retry
-          </button>
+          </Button>
         </div>
       )}
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/Button'
 
 interface User {
   id: string
@@ -609,21 +610,23 @@ export default function AdminUsersPage() {
             </div>
             
             <div className="flex justify-end space-x-3 mt-6">
-              <button
+              <Button
                 onClick={() => {
                   setShowBanModal(false)
                   setSelectedUser(null)
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                variant="outline"
+                size="md"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={confirmBan}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                variant="destructive"
+                size="md"
               >
                 Ban User
-              </button>
+              </Button>
             </div>
           </div>
         </div>

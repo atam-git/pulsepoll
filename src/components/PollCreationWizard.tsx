@@ -15,6 +15,7 @@ import {
   PhotoIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui/Button'
 
 type PollType = 'single' | 'multiple' | 'ranking' | 'yesno' | 'survey'
 
@@ -602,31 +603,37 @@ export function PollCreationWizard({ existingPoll, isEditing = false }: PollCrea
 
         {/* Navigation */}
         <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
-          <button
+          <Button
             onClick={prevStep}
             disabled={step === 0}
-            className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed"
+            variant="ghost"
+            size="md"
+            className="flex items-center gap-1"
           >
             <ChevronLeftIcon className="w-4 h-4" />
             Back
-          </button>
+          </Button>
 
           {step < STEPS.length - 1 ? (
-            <button
+            <Button
               onClick={nextStep}
-              className="flex items-center gap-1 px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+              variant="primary"
+              size="md"
+              className="flex items-center gap-1"
             >
               Next
               <ChevronRightIcon className="w-4 h-4" />
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              variant="primary"
+              size="md"
+              loading={submitting}
             >
-              {submitting ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Poll' : 'Create Poll')}
-            </button>
+              {isEditing ? 'Update Poll' : 'Create Poll'}
+            </Button>
           )}
         </div>
       </div>

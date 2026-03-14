@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { ReactNode } from 'react'
+import { Button } from '@/components/ui/Button'
 
 interface Column {
   key: string
@@ -34,10 +35,10 @@ export function DataTableCard({
   onRowClick,
 }: DataTableCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-8 py-6">
-        <h3 className="text-xl font-bold text-slate-900">{title}</h3>
+      <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+        <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
         {viewAllHref && (
           <Link
             href={viewAllHref}
@@ -56,12 +57,13 @@ export function DataTableCard({
           </svg>
           <p className="text-base text-slate-600 font-medium">{emptyMessage}</p>
           {emptyAction && (
-            <Link
+            <Button
               href={emptyAction.href}
-              className="mt-6 inline-block px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+              variant="primary"
+              className="mt-6"
             >
               {emptyAction.label}
-            </Link>
+            </Button>
           )}
         </div>
       ) : (
@@ -74,7 +76,7 @@ export function DataTableCard({
                   {columns.map((col) => (
                     <th
                       key={col.key}
-                      className="px-8 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-600"
                       style={col.width ? { width: col.width } : undefined}
                     >
                       {col.label}
@@ -82,17 +84,17 @@ export function DataTableCard({
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-100">
                 {data.map((row, idx) => (
                   <tr
                     key={idx}
-                    className={`transition-all duration-200 hover:bg-slate-50 ${
+                    className={`transition-colors duration-200 hover:bg-slate-50 ${
                       onRowClick ? 'cursor-pointer' : ''
                     }`}
                     onClick={() => onRowClick?.(row)}
                   >
                     {columns.map((col) => (
-                      <td key={col.key} className="whitespace-nowrap px-8 py-5 text-sm text-slate-700 font-medium">
+                      <td key={col.key} className="whitespace-nowrap px-6 py-4 text-sm text-slate-700 font-medium">
                         {renderCell ? renderCell(col.key, row[col.key], row) : row[col.key]}
                       </td>
                     ))}

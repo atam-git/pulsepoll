@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { MagnifyingGlassIcon, FunnelIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui/Button'
 
 interface Poll {
   id: string
@@ -87,12 +88,13 @@ export default function PollsPage() {
             <h1 className="text-2xl font-bold text-gray-900">My Polls</h1>
             <p className="text-gray-600 mt-1">Manage and view all your polls</p>
           </div>
-          <Link
+          <Button
             href="/poll/create"
-            className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+            variant="primary"
+            size="md"
           >
             Create Poll
-          </Link>
+          </Button>
         </div>
 
         {/* Search and Filter */}

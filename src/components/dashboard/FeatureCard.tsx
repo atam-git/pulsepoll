@@ -14,7 +14,7 @@ export function FeatureCard({ icon: Icon, title, description, linkText, linkHref
   return (
     <Link
       href={linkHref}
-      className="group flex min-h-[280px] flex-col justify-between rounded-2xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-xl transition-all duration-300 hover:border-green-500 hover:bg-green-600"
+      className="group flex min-h-[280px] flex-col justify-between rounded-xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:border-green-500 hover:bg-green-600"
     >
       {/* Top content */}
       <div>

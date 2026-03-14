@@ -10,6 +10,7 @@ import {
   DocumentDuplicateIcon,
   ArrowTopRightOnSquareIcon
 } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui/Button'
 
 export default function SharePage() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
@@ -271,18 +272,20 @@ export default function SharePage() {
           Create engaging polls and share them with the world using our powerful sharing tools
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
+          <Button
             href="/poll/create"
-            className="px-6 py-3 bg-white text-green-600 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            variant="outline"
+            size="lg"
           >
             Create New Poll
-          </Link>
-          <Link
+          </Button>
+          <Button
             href="/polls"
-            className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors border border-green-400"
+            variant="primary"
+            size="lg"
           >
             Share Existing Poll
-          </Link>
+          </Button>
         </div>
       </div>
     </div>
