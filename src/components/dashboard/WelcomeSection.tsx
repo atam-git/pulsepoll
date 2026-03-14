@@ -19,27 +19,27 @@ export function WelcomeSection({
   ctaButtonHref = '/poll/create',
 }: WelcomeSectionProps) {
   return (
-    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
       {/* Greeting */}
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">
-          Welcome, {userName} 👋
+        <h1 className="text-3xl font-bold text-slate-900">
+          Welcome back, {userName} 👋
         </h1>
-        <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+        <p className="mt-2 text-base text-slate-600">{subtitle}</p>
       </div>
 
       {/* CTA Banner */}
-      <div className="flex flex-col gap-4 rounded-xl bg-secondary-base p-6 text-white sm:flex-row sm:items-center sm:justify-between md:max-w-md">
-        <div>
-          <h2 className="text-base font-semibold">{ctaTitle}</h2>
-          <p className="mt-1 text-sm text-gray-300">{ctaDescription}</p>
+      <div className="flex flex-col gap-4 rounded-2xl bg-slate-900 p-8 text-white sm:flex-row sm:items-center sm:gap-6 md:max-w-md shadow-lg">
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold text-white">{ctaTitle}</h2>
+          <p className="mt-2 text-sm text-slate-300 leading-relaxed">{ctaDescription}</p>
         </div>
         <Button
           href={ctaButtonHref}
           variant="primary"
           rounded="full"
           size="md"
-          className="shrink-0"
+          className="shrink-0 whitespace-nowrap"
         >
           {ctaButtonText}
         </Button>

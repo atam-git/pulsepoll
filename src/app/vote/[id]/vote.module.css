@@ -12,10 +12,11 @@
   padding: 0 32px;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid #e5e7eb;
   background: #fff;
   box-sizing: border-box;
   position: relative;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .headerLogo {
@@ -29,18 +30,21 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #94d510;
+  background: #00A651;
   color: #fff;
   font-size: 15px;
   font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
 }
 
 .shareBtn:hover {
-  background: #7fb80e;
+  background: #008c44;
+  box-shadow: 0 4px 8px rgba(0, 166, 81, 0.3);
+  transform: translateY(-1px);
 }
 
 .shareBtn svg {
@@ -76,17 +80,20 @@
 }
 
 .pollQuestion {
-  color: #000;
-  font-size: 32px;
-  font-weight: 600;
-  line-height: normal;
+  color: #0f172a;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .pollDescription {
-  color: #444;
+  color: #475569;
   font-size: 16px;
-  margin: -16px 0 0;
+  line-height: 1.6;
+  margin: 12px 0 0;
+  font-weight: 400;
 }
 
 /* Loading / Error / Success screens */
@@ -150,49 +157,54 @@
 }
 
 .successIcon {
-  width: 64px;
-  height: 64px;
-  background: #edfbd8;
+  width: 80px;
+  height: 80px;
+  background: #dcfce7;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-  color: #94d510;
+  margin: 0 auto 24px;
+  color: #00A651;
+  font-size: 48px;
 }
 
 .successCard h2 {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #111;
-  margin: 0 0 8px;
+  color: #0f172a;
+  margin: 0 0 12px;
 }
 
 .successCard p {
-  color: #555;
-  font-size: 15px;
-  margin: 0 0 24px;
+  color: #64748b;
+  font-size: 16px;
+  margin: 0 0 32px;
+  line-height: 1.6;
 }
 
 .viewResultsBtn {
   width: 100%;
   padding: 14px 24px;
-  background: #94d510;
+  background: #00A651;
   color: #fff;
   font-size: 16px;
   font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
 }
 
 .viewResultsBtn:hover {
-  background: #7fb80e;
+  background: #008c44;
+  box-shadow: 0 4px 8px rgba(0, 166, 81, 0.3);
+  transform: translateY(-2px);
 }
 
 .copiedMessage {
-  color: #94d510;
+  color: #00A651;
   font-size: 14px;
   margin-top: 12px;
   font-weight: 600;
