@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
 
 export default function UnauthorizedPage() {
   const router = useRouter()
@@ -22,26 +23,32 @@ export default function UnauthorizedPage() {
         </p>
         
         <div className="space-y-3">
-          <button
+          <Button
             onClick={() => router.back()}
-            className="w-full px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            variant="primary"
+            size="lg"
+            className="w-full"
           >
             Go Back
-          </button>
-          
-          <Link
+          </Button>
+
+          <Button
             href="/dashboard"
-            className="block w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+            variant="secondary"
+            size="lg"
+            className="w-full"
           >
             Go to Dashboard
-          </Link>
-          
-          <Link
+          </Button>
+
+          <Button
             href="/"
-            className="block w-full px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors"
+            variant="ghost"
+            size="lg"
+            className="w-full"
           >
             Go to Home
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

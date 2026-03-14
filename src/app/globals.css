@@ -251,6 +251,36 @@ p {
   transition-duration: 300ms;
 }
 
+/* Card and elevation utilities */
+.card-base {
+  background: var(--background);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 200ms ease;
+}
+
+.card-elevated {
+  background: var(--background);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-md);
+  transition: all 200ms ease;
+}
+
+.card-interactive {
+  background: var(--background);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 300ms ease;
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
 /* Status badges styling */
 .badge {
   display: inline-flex;

@@ -11,6 +11,7 @@ import {
   ArrowUpIcon,
   ArrowDownIcon
 } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui/Button'
 
 interface UserAnalytics {
   overview: {
@@ -391,12 +392,13 @@ export default function AnalyticsPage() {
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">No recent activity</p>
-              <Link
+              <Button
                 href="/poll/create"
-                className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                variant="primary"
+                size="md"
               >
                 Create Your First Poll
-              </Link>
+              </Button>
             </div>
           )}
         </div>
