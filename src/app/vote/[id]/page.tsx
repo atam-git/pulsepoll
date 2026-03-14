@@ -33,6 +33,34 @@ export default function VotePage() {
   const [error, setError] = useState<string | null>(null)
   const [debugInfo, setDebugInfo] = useState<any>(null)
   const [hasVoted, setHasVoted] = useState(false)
+  const [showCopied, setShowCopied] = useState(false)
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/vote/${pollId}`
+    const shareData = {
+      title: poll?.title || 'Vote on this poll',
+      text: poll?.description || 'Check out this poll',
+      url: shareUrl
+    }
+
+    // Check if mobile (has native share API)
+    if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.log('Share cancelled or failed:', err)
+      }
+    } else {
+      // Desktop: copy link
+      try {
+        await navigator.clipboard.writeText(shareUrl)
+        setShowCopied(true)
+        setTimeout(() => setShowCopied(false), 2000)
+      } catch (err) {
+        console.error('Failed to copy:', err)
+      }
+    }
+  }
 
   useEffect(() => {
     if (!pollId) return
@@ -154,9 +182,10 @@ export default function VotePage() {
           </div>
           <h2>Thank You!</h2>
           <p>Your vote has been recorded successfully.</p>
-          <button onClick={handleViewResults} className={styles.viewResultsBtn}>
-            Results
+          <button onClick={handleShare} className={styles.viewResultsBtn}>
+            Share
           </button>
+          {showCopied && <p className={styles.copiedMessage}>Link copied!</p>}
         </div>
       </div>
     )
@@ -170,6 +199,13 @@ export default function VotePage() {
           alt="Connect Nigeria"
           className={styles.headerLogo}
         />
+        <button onClick={handleShare} className={styles.shareBtn}>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          Share
+        </button>
+        {showCopied && <span className={styles.copiedTooltip}>Copied!</span>}
       </header>
 
       <main className={styles.voteMain}>
