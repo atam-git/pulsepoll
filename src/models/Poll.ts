@@ -25,7 +25,7 @@ export interface IPoll extends Document {
   options: IPollOption[]
   privacy: 'public' | 'unlisted' | 'private'
   creatorId: mongoose.Types.ObjectId
-  status: 'draft' | 'active' | 'expired' | 'closed'
+  status: 'active' | 'inactive'
   moderation: {
     isFlagged: boolean
     flags: IPollFlag[]
@@ -160,8 +160,8 @@ const PollSchema = new Schema<IPoll>({
   status: {
     type: String,
     enum: {
-      values: ['draft', 'active', 'expired', 'closed'],
-      message: 'Status must be one of: draft, active, expired, closed'
+      values: ['active', 'inactive'],
+      message: 'Status must be one of: active, inactive'
     },
     default: 'active'
   },

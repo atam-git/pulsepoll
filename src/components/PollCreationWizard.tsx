@@ -259,7 +259,7 @@ export function PollCreationWizard({ existingPoll, isEditing = false }: PollCrea
 
       const data = await response.json()
       const pollId = data.poll?.id || data.poll?._id || data.id || existingPoll?.id
-      router.push(`/dashboard?poll=${pollId}`)
+      router.push(`/polls`)
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : `Failed to ${isEditing ? 'update' : 'create'} poll`)
     } finally {

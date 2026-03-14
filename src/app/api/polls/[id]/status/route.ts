@@ -26,10 +26,10 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
     }
 
     // Validate status
-    const validStatuses = ['active', 'inactive', 'archived', 'draft']
+    const validStatuses = ['active', 'inactive']
     if (!status || !validStatuses.includes(status)) {
       return NextResponse.json(
-        { error: 'Invalid status. Must be one of: active, inactive, archived, draft' },
+        { error: 'Invalid status. Must be one of: active, inactive' },
         { status: 400 }
       )
     }
@@ -57,38 +57,10 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
       )
     }
 
-    // Validate status transitions
-    const currentStatus = poll.metadata.status
-    
-    // Define valid status transitions
-    const validTransitions: Record<string, string[]> = {
-      'draft': ['active', 'archived'],
-      'active': ['inactive', 'archived'],
-      'inactive': ['active', 'archived'],
-      'archived': [] // Archived polls cannot be changed
-    }
-
-    if (currentStatus === 'archived' && status !== 'archived') {
-      return NextResponse.json(
-        { error: 'Cannot change status of archived polls' },
-        { status: 400 }
-      )
-    }
-
-    if (!validTransitions[currentStatus]?.includes(status)) {
-      return NextResponse.json(
-        { 
-          error: `Cannot transition from ${currentStatus} to ${status}`,
-          validTransitions: validTransitions[currentStatus] || []
-        },
-        { status: 400 }
-      )
-    }
-
-    // Update poll status
+    // Update poll status - status is at top level, not in metadata
     const updates: any = {
-      'metadata.status': status,
-      'metadata.updatedAt': new Date()
+      status: status,
+      updatedAt: new Date()
     }
 
     // Add status change reason if provided
@@ -98,18 +70,14 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
       updates['metadata.statusChangedBy'] = req.user!.id
     }
 
-    // Handle specific status logic
-    if (status === 'archived') {
-      // When archiving, also set as private
-      updates['privacy.isPublic'] = false
-    } else if (status === 'active' && currentStatus === 'draft') {
-      // When activating from draft, set creation timestamp
+    // If activating for the first time, set activation timestamp
+    if (status === 'active' && !poll.metadata?.activatedAt) {
       updates['metadata.activatedAt'] = new Date()
     }
 
     const updatedPoll = await Poll.findByIdAndUpdate(
       id,
-      updates,
+      { $set: updates },
       { new: true, runValidators: true }
     ).populate('creatorId', 'email')
 
@@ -119,11 +87,12 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
       poll: {
         id: updatedPoll._id,
         title: updatedPoll.title,
+        status: updatedPoll.status,
         metadata: updatedPoll.metadata,
         privacy: updatedPoll.privacy
       },
       statusChange: {
-        from: currentStatus,
+        from: poll.status || 'inactive',
         to: status,
         reason: reason || null,
         changedAt: new Date(),
@@ -136,7 +105,7 @@ async function updatePollStatus(req: AuthenticatedRequest, { params }: RoutePara
       RealTimeHelper.broadcastStatusChange(
         id,
         status,
-        reason || `Status changed from ${currentStatus} to ${status}`
+        reason || `Status changed from ${poll.status || 'inactive'} to ${status}`
       )
     } catch (broadcastError) {
       console.error('Error broadcasting status change:', broadcastError)

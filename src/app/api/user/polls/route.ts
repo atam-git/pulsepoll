@@ -48,13 +48,10 @@ async function getUserPolls(req: AuthenticatedRequest, {}: RouteParams) {
           ]
           break
         case 'inactive':
-          query.status = 'closed'
+          query.status = 'inactive'
           break
         case 'expired':
           query['settings.expiresAt'] = { $lte: new Date() }
-          break
-        case 'draft':
-          query.status = 'draft'
           break
       }
     }

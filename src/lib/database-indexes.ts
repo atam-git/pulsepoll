@@ -165,18 +165,12 @@ export async function performMaintenance() {
     })
     console.log(`✓ Cleaned up ${expiredExports.deletedCount} expired exports`)
 
-    // Update poll status for expired polls
-    const expiredPolls = await Poll.updateMany(
-      {
-        status: 'active',
-        'settings.expiresAt': { $lt: new Date() }
-      },
-      { status: 'expired' }
-    )
-    console.log(`✓ Updated ${expiredPolls.modifiedCount} expired polls`)
+    // Note: Polls with expired dates are still marked as 'active' or 'inactive'
+    // The expiration is checked at query time via settings.expiresAt
+    console.log('✓ Poll expiration is handled via settings.expiresAt field')
 
     // Recalculate poll vote counts (data integrity check)
-    const polls = await Poll.find({ status: { $in: ['active', 'expired'] } })
+    const polls = await Poll.find({ status: { $in: ['active', 'inactive'] } })
     let recalculatedPolls = 0
 
     for (const poll of polls) {
@@ -194,7 +188,6 @@ export async function performMaintenance() {
     return {
       expiredSessionsRemoved: expiredSessions.deletedCount,
       expiredExportsRemoved: expiredExports.deletedCount,
-      expiredPollsUpdated: expiredPolls.modifiedCount,
       pollsRecalculated: recalculatedPolls
     }
   } catch (error) {

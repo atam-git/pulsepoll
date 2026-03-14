@@ -93,11 +93,13 @@ async function getPoll(req: AuthenticatedRequest, { params }: RouteParams) {
         title: poll.title,
         description: poll.description,
         type: poll.type,
+        status: poll.status,
         options: poll.options,
         settings: poll.settings,
         privacy: poll.privacy,
         metadata: {
           ...poll.metadata,
+          status: poll.status,
           isExpired,
           // Include incremented view count in response for public polls
           viewCount: shouldIncrementView ? (poll.metadata.viewCount || 0) + 1 : poll.metadata.viewCount
