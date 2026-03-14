@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { MagnifyingGlassIcon, FunnelIcon, EllipsisVerticalIcon } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 interface Poll {
   id: string
@@ -98,7 +99,7 @@ export default function PollsPage() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <Card>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -125,11 +126,11 @@ export default function PollsPage() {
               </select>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Polls Grid */}
         {filteredPolls.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <Card padding="lg">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -145,7 +146,7 @@ export default function PollsPage() {
             >
               Create Poll
             </Link>
-          </div>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPolls.map((poll) => {
@@ -158,9 +159,10 @@ export default function PollsPage() {
               }
 
               return (
-                <div
+                <Card
                   key={poll.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow relative"
+                  hover
+                  className="relative"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <Link
@@ -270,7 +272,7 @@ export default function PollsPage() {
                       </div>
                     </div>
                   </Link>
-                </div>
+                </Card>
               )
             })}
           </div>

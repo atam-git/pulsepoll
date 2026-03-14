@@ -12,6 +12,7 @@ import {
   ArrowDownIcon
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 interface UserAnalytics {
   overview: {
@@ -146,7 +147,7 @@ export default function AnalyticsPage() {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card>
           <div className="flex items-center">
             <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
               <ClipboardDocumentListIcon className="h-6 w-6 text-blue-600" />
@@ -158,9 +159,9 @@ export default function AnalyticsPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card>
           <div className="flex items-center">
             <div className="flex-shrink-0 bg-green-100 rounded-md p-3">
               <CheckCircleIcon className="h-6 w-6 text-green-600" />
@@ -172,9 +173,9 @@ export default function AnalyticsPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card>
           <div className="flex items-center">
             <div className="flex-shrink-0 bg-purple-100 rounded-md p-3">
               <UsersIcon className="h-6 w-6 text-purple-600" />
@@ -186,9 +187,9 @@ export default function AnalyticsPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card>
           <div className="flex items-center">
             <div className="flex-shrink-0 bg-orange-100 rounded-md p-3">
               <EyeIcon className="h-6 w-6 text-orange-600" />
@@ -200,9 +201,9 @@ export default function AnalyticsPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <Card>
           <div className="flex items-center">
             <div className="flex-shrink-0 bg-indigo-100 rounded-md p-3">
               <ChartBarIcon className="h-6 w-6 text-indigo-600" />
@@ -214,11 +215,11 @@ export default function AnalyticsPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Growth Metrics */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <Card>
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Growth Trends</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
@@ -259,11 +260,11 @@ export default function AnalyticsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Performing Polls */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <Card padding="none">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Top Performing Polls</h2>
           </div>
@@ -309,10 +310,10 @@ export default function AnalyticsPage() {
               <p className="text-gray-600 text-center py-8">No polls created yet</p>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Poll Type Distribution */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <Card padding="none">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">Poll Type Distribution</h2>
           </div>
@@ -347,15 +348,15 @@ export default function AnalyticsPage() {
               <p className="text-gray-600 text-center py-8">No poll type data available</p>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <Card padding="none">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">Recent Activity (Last 30 Days)</h2>
-          <Link 
-            href="/polls" 
+          <Link
+            href="/polls"
             className="text-sm text-green-600 hover:text-green-700 font-medium"
           >
             View All Polls
@@ -402,7 +403,7 @@ export default function AnalyticsPage() {
             </div>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   )
 }

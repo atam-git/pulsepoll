@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { PollRealTimeUpdates, usePollWithRealTime } from '@/components/PollRealTimeUpdates'
 import { PollShareDialog } from '@/components/PollShareDialog'
 import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 interface Poll {
   id: string
@@ -114,14 +115,14 @@ export default function PollDetailsPage() {
         </div>
 
         {/* Poll header */}
-        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+        <Card>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
             {currentPoll.title || 'Untitled Poll'}
           </h1>
           {currentPoll.description && (
             <p className="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base">{currentPoll.description}</p>
           )}
-          
+
           {/* Poll info */}
           <div className="mb-4">
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-800 mb-4">
@@ -134,7 +135,7 @@ export default function PollDetailsPage() {
               )}
             </div>
           </div>
-          
+
           {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <button
@@ -146,7 +147,7 @@ export default function PollDetailsPage() {
               </svg>
               <span>Share Poll</span>
             </button>
-            
+
             <a
               href={`/vote/${pollId}`}
               target="_blank"
@@ -227,7 +228,7 @@ export default function PollDetailsPage() {
               </button> */}
             </nav>
           </div>
-        </div>
+        </Card>
 
         {/* Tab Content */}
         {activeTab === 'results' && (

@@ -6,7 +6,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-xl shadow-md border border-slate-200 p-8">
+        <div className="bg-white rounded-xl shadow-sm hover:shadow-md border border-slate-200 p-8 transition-shadow duration-200">
           <LoginForm />
         </div>
         <p className="text-center text-slate-500 text-xs mt-8">

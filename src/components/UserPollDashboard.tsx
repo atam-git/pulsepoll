@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 
 interface Poll {
   id: string
@@ -195,7 +196,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
     <div className="space-y-6">
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card padding="md">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -207,9 +208,9 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
               <p className="text-2xl font-bold text-gray-900">{totalPolls}</p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card padding="md">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -223,9 +224,9 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card padding="md">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
@@ -239,9 +240,9 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
               </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <Card padding="md">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
@@ -255,11 +256,11 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
               </p>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-lg shadow p-4 md:p-6">
+      <Card>
         <div className="flex flex-col space-y-4">
           {/* Search */}
           <div className="w-full">
@@ -309,7 +310,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
             </Link>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Polls List */}
       {error && (
@@ -327,7 +328,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
       )}
 
       {polls.length === 0 && !loading ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
+        <Card padding="lg">
           <div className="text-gray-600 mb-4">
             <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -346,14 +347,13 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
           >
             Create Your First Poll
           </Link>
-        </div>
+        </Card>
       ) : (
         <div className="space-y-4">
           {polls.map((poll) => (
-            <div key={poll.id} className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
-              <div className="p-4 md:p-6">
-                <div className="flex flex-col space-y-4">
-                  <div className="flex-1">
+            <Card key={poll.id} padding="md" hover>
+              <div className="flex flex-col space-y-4">
+                <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
                         {onPollSelect ? (
@@ -451,16 +451,15 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
                       Delete
                     </button>
                   </div>
-                </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="bg-white rounded-lg shadow p-4">
+        <Card padding="md">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 text-center sm:text-left">
               Showing {((currentPage - 1) * pollsPerPage) + 1} to {Math.min(currentPage * pollsPerPage, totalPolls)} of {totalPolls} polls
@@ -501,7 +500,7 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
               </button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   )
