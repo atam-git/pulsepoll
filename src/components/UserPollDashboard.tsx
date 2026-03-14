@@ -123,6 +123,36 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
     }
   }
 
+  const handleToggleStatus = async (poll: Poll) => {
+    const currentStatus = isExpired(poll) ? 'expired' : poll.status
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+    
+    try {
+      const response = await fetch(`/api/polls/${poll.id}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          status: newStatus,
+          reason: `Toggled from dashboard`
+        })
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to toggle status')
+      }
+
+      // Refresh the polls list
+      fetchPolls()
+      
+      alert(`Poll ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to toggle status')
+    }
+  }
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -377,14 +407,34 @@ export function UserPollDashboard({ userId, onPollSelect }: UserPollDashboardPro
                         View
                       </Link>
                     )}
+                    <Link
+                      href={`/poll/${poll.id}/edit`}
+                      className="px-3 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    >
+                      Edit
+                    </Link>
                     <a
                       href={`/vote/${poll.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                      className="px-3 py-1.5 text-sm bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
                     >
                       Vote
                     </a>
+                    <button
+                      onClick={() => handleToggleStatus(poll)}
+                      disabled={isExpired(poll) || poll.status === 'archived'}
+                      className={`px-3 py-1.5 text-sm rounded transition-colors ${
+                        isExpired(poll) || poll.status === 'archived'
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : poll.status === 'active'
+                          ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                          : 'bg-green-500 text-white hover:bg-green-600'
+                      }`}
+                      title={isExpired(poll) ? 'Cannot toggle expired polls' : poll.status === 'archived' ? 'Cannot toggle archived polls' : poll.status === 'active' ? 'Deactivate' : 'Activate'}
+                    >
+                      {poll.status === 'active' ? 'Deactivate' : 'Activate'}
+                    </button>
                     <button
                       onClick={() => handleClearVotes(poll.id)}
                       className="px-3 py-1.5 text-sm bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"

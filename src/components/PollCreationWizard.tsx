@@ -63,28 +63,57 @@ function generateId() {
   return Math.random().toString(36).substring(2, 9)
 }
 
-export function PollCreationWizard() {
+interface PollCreationWizardProps {
+  existingPoll?: any
+  isEditing?: boolean
+}
+
+export function PollCreationWizard({ existingPoll, isEditing = false }: PollCreationWizardProps) {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [errors, setErrors] = useState<FormErrors>({})
 
-  const [formData, setFormData] = useState<PollFormData>({
-    title: '',
-    description: '',
-    type: 'single',
-    options: [
-      { id: generateId(), text: '' },
-      { id: generateId(), text: '' },
-    ],
-    settings: {
-      privacy: 'public',
-      expirationDate: '',
-      maxVotes: '',
-      allowAnonymous: true,
-      requireCaptcha: false,
-    },
+  const [formData, setFormData] = useState<PollFormData>(() => {
+    if (existingPoll) {
+      return {
+        title: existingPoll.title || '',
+        description: existingPoll.description || '',
+        type: existingPoll.type || 'single',
+        options: existingPoll.options?.map((opt: any) => ({
+          id: opt._id || generateId(),
+          text: opt.text || '',
+          imageUrl: opt.imageUrl,
+        })) || [
+          { id: generateId(), text: '' },
+          { id: generateId(), text: '' },
+        ],
+        settings: {
+          privacy: existingPoll.privacy?.isPublic ? 'public' : existingPoll.privacy?.isUnlisted ? 'unlisted' : 'private',
+          expirationDate: existingPoll.settings?.expiresAt ? new Date(existingPoll.settings.expiresAt).toISOString().slice(0, 16) : '',
+          maxVotes: existingPoll.settings?.maxVotesPerUser || '',
+          allowAnonymous: existingPoll.settings?.allowAnonymousVoting ?? true,
+          requireCaptcha: existingPoll.settings?.requireCaptcha ?? false,
+        },
+      }
+    }
+    return {
+      title: '',
+      description: '',
+      type: 'single',
+      options: [
+        { id: generateId(), text: '' },
+        { id: generateId(), text: '' },
+      ],
+      settings: {
+        privacy: 'public',
+        expirationDate: '',
+        maxVotes: '',
+        allowAnonymous: true,
+        requireCaptcha: false,
+      },
+    }
   })
 
   const validateStep = (s: number): boolean => {
@@ -214,21 +243,25 @@ export function PollCreationWizard() {
         },
       }
 
-      const response = await fetch('/api/polls', {
-        method: 'POST',
+      const url = isEditing && existingPoll ? `/api/polls/${existingPoll._id || existingPoll.id}` : '/api/polls'
+      const method = isEditing ? 'PUT' : 'POST'
+
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to create poll')
+        throw new Error(data.error || `Failed to ${isEditing ? 'update' : 'create'} poll`)
       }
 
       const data = await response.json()
-      router.push(`/dashboard?poll=${data.poll?.id || data.id}`)
+      const pollId = data.poll?.id || data.poll?._id || data.id || existingPoll?.id
+      router.push(`/dashboard?poll=${pollId}`)
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Failed to create poll')
+      setSubmitError(err instanceof Error ? err.message : `Failed to ${isEditing ? 'update' : 'create'} poll`)
     } finally {
       setSubmitting(false)
     }
@@ -592,7 +625,7 @@ export function PollCreationWizard() {
               disabled={submitting}
               className="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
             >
-              {submitting ? 'Creating...' : 'Create Poll'}
+              {submitting ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Poll' : 'Create Poll')}
             </button>
           )}
         </div>
